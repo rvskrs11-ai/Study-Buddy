@@ -1,0 +1,4880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StudyBuddy: find a study partner who shares your subjects, schedule and study style.">
+  <title>StudyBuddy - Find your study partner</title>
+
+  <!-- Poppins for everything, Abril Fatface only for the big dashboard heading -->
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+/* ===================== SHARED STYLES (all pages) ===================== */
+
+/* ---------- 1. Base, background and circles ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #1E1E2A;
+  margin: 0;
+  min-height: 100vh;
+  background-image: linear-gradient(135deg, #E6F7EF 0%, #EDE7FF 100%);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.blob-1 {
+  width: 300px;
+  height: 300px;
+  background-color: #D9C8F7;
+  top: -80px;
+  left: -100px;
+}
+
+.blob-2 {
+  width: 380px;
+  height: 380px;
+  background-color: #C6EFC9;
+  bottom: -120px;
+  right: -120px;
+}
+
+.blob-3 {
+  width: 140px;
+  height: 140px;
+  background-color: #F3E3F7;
+  top: 45%;
+  left: 4%;
+}
+
+
+/* ---------- 2. Navbar ---------- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 4%;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0); }      
+  50%  { transform: translateY(-8px); }   
+  100% { transform: translateY(0); }      
+}
+.nav-btn {
+  background-color: #1C3440;
+  color: #FFFFFF;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-size: 17px;
+  font-weight: 500;
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+.nav-btn:hover {
+  background-color: #9C87D6;
+  transform: scale(1.08);
+}
+
+/* the page you are on stays purple */
+.nav-btn.active {
+  background-color: #9C87D6;
+}
+.nav-right {
+  display: flex;
+  gap: 24px;
+}
+
+.icon-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: transform 0.3s;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.icon-link:hover {
+  transform: translateY(-4px);
+}
+
+/* attribute selector: the icon of the page you are on turns purple */
+.icon-link[aria-current="page"] {
+  color: #7A63C4;
+}
+
+/* label used on the dashboard (a span under the icon) */
+.icon-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+.badge {
+  position: absolute;
+  top: -4px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #E35D6A;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #FFFFFF;
+}
+
+.icon-message {
+  width: 42px;
+  height: 34px;
+  background-color: #D9CFF2;
+  border: 2px solid #1C3440;
+  border-radius: 18px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.icon-message::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background-color: #D9CFF2;
+  border: 2px solid #1C3440;
+  border-radius: 50%;
+  bottom: -9px;
+  left: 2px;
+}
+
+.icon-profile {
+  width: 42px;
+  height: 42px;
+  background-color: #D9CFF2;
+  border: 2px solid #1C3440;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-profile::before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background-color: #9C87D6;
+  border-radius: 50%;
+  top: 6px;
+  left: 12px;
+}
+
+.icon-profile::after {
+  content: "";
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background-color: #9C87D6;
+  border-radius: 50%;
+  top: 23px;
+  left: 5px;
+}
+
+.icon-requests {
+  width: 42px;
+  height: 42px;
+  font-size: 32px;
+  color: #9C87D6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotate(-30deg);
+}
+
+
+/* ---------- 3. Layout, panels, buttons, footer ---------- */
+.main {
+  width: 90%;
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+/* white rounded box used on every page (same look as the dashboard's matches box) */
+.panel {
+  background-color: rgba(255, 255, 255, 0.75);
+  border-radius: 28px;
+  padding: 24px 32px;
+  box-shadow: 0 10px 30px rgba(108, 91, 168, 0.15);
+}
+
+/* Dark and light buttons (work on <button> and on <a>) */
+.btn-dark,
+.btn-light {
+  display: inline-block;
+  border-radius: 30px;
+  padding: 10px 22px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s, background-color 0.3s, color 0.3s;
+}
+
+.btn-dark {
+  background-color: #1E1E2A;
+  color: #FFFFFF;
+  border: 2px solid #1E1E2A;
+}
+
+.btn-dark:hover {
+  background-color: #7A63C4;
+  border-color: #7A63C4;
+  transform: scale(1.05);
+}
+
+.btn-light {
+  background-color: #FFFFFF;
+  color: #1E1E2A;
+  border: 2px solid #9C87D6;
+}
+
+.btn-light:hover {
+  background-color: #E6DFF3;
+}
+
+/* red outline button for careful actions (reject, cancel, report) */
+.btn-danger {
+  display: inline-block;
+  background-color: #FFFFFF;
+  color: #C2414F;
+  border: 2px solid #C2414F;
+  border-radius: 30px;
+  padding: 10px 22px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-danger:hover {
+  background-color: #C2414F;
+  color: #FFFFFF;
+}
+.footer {
+  text-align: center;
+  font-size: 14px;
+  color: #5E5A6E;
+  padding: 32px 0 20px;
+}
+
+
+/* Text only for screen readers (keeps tables and forms accessible) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* ---------- 4. Student card (used on Find, Requests and Dashboard) ---------- */
+.student-card {
+  background-color: #E6DFF3;
+  padding: 20px;
+  border-radius: 24px;
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.student-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(108, 91, 168, 0.25);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  color: #6B5BA8;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.branch {
+  margin: 0;
+  font-size: 13px;
+  color: #6E6A7C;
+}
+
+.match {
+  background-color: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.label {
+  font-size: 12px;
+  color: #6E6A7C;
+  margin: 16px 0 6px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin: 0 4px 4px 0;
+}
+
+.tag-help {
+  background-color: #D5ECE4;
+  color: #2E6B57;
+}
+
+.tag-want {
+  background-color: #FFFFFF;
+  color: #6B5BA8;
+}
+
+.days {
+  display: flex;
+  gap: 6px;
+}
+
+.day {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  color: #9A96A8;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day-free {
+  background-color: #9C87D6;
+  color: #FFFFFF;
+}
+
+.card-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.card-buttons .btn-dark {
+  width: 78%;
+}
+
+.btn-view {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 2px solid #9C87D6;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-view:hover {
+  background-color: #9C87D6;
+  color: #FFFFFF;
+}
+
+
+/* ---------- 5. Page titles (same size as the Find page) ---------- */
+.page-title {
+  font-size: 34px;
+  font-weight: 600;
+  color: #1C3440;
+  margin: 10px 0 4px;
+}
+
+.page-subtitle {
+  color: #5E5A6E;
+  margin: 0 0 24px;
+}
+
+/* ---------- 6. Forms used on Settings and Report (scoped to those two pages) ---------- */
+#page-settings fieldset,
+#page-report fieldset {
+  border: 2px solid #E6DFF3;
+  border-radius: 18px;
+  padding: 14px 20px 8px;
+  margin: 0 0 20px;
+}
+#page-settings legend,
+#page-report legend {
+  font-weight: 600;
+  padding: 0 8px;
+}
+#page-settings .field,
+#page-report .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+#page-settings label.required::after,
+#page-report label.required::after {
+  content: " *";
+  color: #C2414F;
+}
+#page-settings .field input[type="text"],
+#page-report .field input[type="text"],
+#page-settings .field input[type="file"],
+#page-report .field input[type="file"],
+#page-settings .field select,
+#page-report .field select,
+#page-settings .field textarea,
+#page-report .field textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #D9CFF2;
+  border-radius: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  background-color: #FFFFFF;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+#page-settings .field input:focus,
+#page-report .field input:focus,
+#page-settings .field select:focus,
+#page-report .field select:focus,
+#page-settings .field textarea:focus,
+#page-report .field textarea:focus {
+  border-color: #9C87D6;
+  box-shadow: 0 0 0 4px rgba(156, 135, 214, 0.25);
+  outline: none;
+}
+#page-settings .field textarea,
+#page-report .field textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+#page-settings .field input:focus:invalid,
+#page-report .field input:focus:invalid,
+#page-settings .field textarea:focus:invalid,
+#page-report .field textarea:focus:invalid {
+  border-color: #C2414F;
+  box-shadow: 0 0 0 4px rgba(194, 65, 79, 0.2);
+}
+#page-settings .choice,
+#page-report .choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+#page-settings .choice input,
+#page-report .choice input {
+  accent-color: #7A63C4;
+}
+#page-settings .form-actions,
+#page-report .form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* ---------- 7. Responsive ---------- */
+@media (max-width: 900px) {
+  .page-title { font-size: 30px; }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .nav-btn {
+    padding: 8px 16px;
+    font-size: 15px;
+  }
+  .page-title { font-size: 26px; }
+  .panel { padding: 20px; }
+}
+
+
+/* =====================================================================
+   ONE FILE, MANY PAGES
+   The hidden radio buttons at the top of <body> decide which page shows.
+   Labels (navbar items, buttons, links) select a radio, and :checked
+   plus the ~ selector show that page and hide the others.
+   ===================================================================== */
+.page-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.page {
+  display: none;
+}
+
+#pg-index:checked ~ #page-index,
+#pg-login:checked ~ #page-login,
+#pg-signup:checked ~ #page-signup,
+#pg-editprofile:checked ~ #page-editprofile,
+#pg-dashboard:checked ~ #page-dashboard,
+#pg-find:checked ~ #page-find,
+#pg-profile:checked ~ #page-profile,
+#pg-myprofile:checked ~ #page-myprofile,
+#pg-requests:checked ~ #page-requests,
+#pg-messages:checked ~ #page-messages,
+#pg-settings:checked ~ #page-settings,
+#pg-report:checked ~ #page-report {
+  display: block;
+}
+
+/* login and sign up centre their card, so they use grid */
+#pg-login:checked  ~ #page-login,
+#pg-signup:checked ~ #page-signup {
+  display: grid;
+}
+
+/* labels act like links, so show the hand cursor */
+.nav-btn, .icon-link, .btn-view, .back-link, .see-all, .logo-link, .menu-box label, .footer-link, .p1-link, .p1-go {
+  cursor: pointer;
+}
+
+.footer-link {
+  text-decoration: underline;
+}
+
+/* The landing, login, sign up and edit-profile pages have their own look,
+   so the shared navbar, circles and footer are hidden on them */
+#pg-index:checked ~ .navbar,
+#pg-index:checked ~ .blob,
+#pg-index:checked ~ .footer,
+#pg-login:checked ~ .navbar,
+#pg-login:checked ~ .blob,
+#pg-login:checked ~ .footer,
+#pg-signup:checked ~ .navbar,
+#pg-signup:checked ~ .blob,
+#pg-signup:checked ~ .footer,
+#pg-editprofile:checked ~ .navbar,
+#pg-editprofile:checked ~ .blob,
+#pg-editprofile:checked ~ .footer {
+  display: none;
+}
+
+/* highlight the page you are on in the navbar */
+#pg-dashboard:checked ~ .navbar label[for="pg-dashboard"].nav-btn,
+#pg-find:checked      ~ .navbar label[for="pg-find"].nav-btn,
+#pg-profile:checked   ~ .navbar label[for="pg-find"].nav-btn {
+  background-color: #9C87D6;
+}
+#pg-messages:checked  ~ .navbar label[for="pg-messages"],
+#pg-myprofile:checked ~ .navbar label[for="pg-myprofile"],
+#pg-requests:checked  ~ .navbar label[for="pg-requests"] {
+  color: #7A63C4;
+}
+
+/* ---------- Part 1 pages: buttons that open the next page once the form is valid ---------- */
+.p1-page {
+  min-height: 100vh;
+}
+.p1-go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.p1-page form:valid .p1-go {
+  opacity: 1;
+  pointer-events: auto;
+}
+.p1-need {
+  margin: 0 0 8px;
+  color: #666477;
+  font-size: 0.82rem;
+  text-align: center;
+}
+.p1-page form:valid .p1-need {
+  display: none;
+}
+.p1-save-row {
+  align-items: center;
+  gap: 14px;
+}
+.p1-save-row .p1-need {
+  margin: 0;
+}
+
+/* ===================== PAGE-SPECIFIC STYLES =====================
+   Every rule below starts with #page-name, so a class used on one page
+   can never change another page. Part 1 class names also start with p1-. */
+
+/* ---------- Landing page (Part 1) ---------- */
+#page-index {
+  color-scheme: light;
+  --ink: #1E1B2E;
+  --muted: #666477;
+  --lavender: #EAE6FF;
+  --purple: #8B70EE;
+  --mint: #E8F7EE;
+  --green: #4CAF78;
+  --paper: #FCFBFF;
+  --line: #E9E6F1;
+  --shadow: 0 18px 48px rgba(49, 39, 88, .09);
+}
+#page-index * {
+  box-sizing: border-box;
+}
+#page-index {
+  min-height: 100vh;
+  margin: 0;
+  color: #1E1B2E;
+  background: linear-gradient(135deg, #E6F7EF 0%, #EDE7FF 100%) !important;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  line-height: 1.6;
+}
+#page-index .p1-link {
+  color: inherit;
+  text-decoration: none;
+}
+#page-index button,
+#page-index .p1-link {
+  -webkit-tap-highlight-color: transparent;
+}
+#page-index .p1-shell {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+}
+#page-index header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgba(252, 251, 255, .94);
+  border-bottom: 1px solid rgba(233, 230, 241, .8);
+  backdrop-filter: blur(12px);
+}
+#page-index nav {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+#page-index .p1-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+#page-index .p1-app-logo-frame {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+#page-index .p1-app-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(1.3);
+  transform-origin: 50% 20%;
+}
+#page-index .p1-nav-links,
+#page-index .p1-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+#page-index .p1-nav-links .p1-link {
+  color: var(--muted);
+  font-size: .92rem;
+  font-weight: 600;
+}
+#page-index .p1-nav-links .p1-link:hover {
+  color: var(--purple);
+}
+#page-index .p1-button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+#page-index .p1-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(49, 39, 88, .14);
+}
+#page-index .p1-button-outline {
+  border-color: var(--line);
+  background: white;
+}
+#page-index .p1-button-dark {
+  color: white;
+  background: var(--ink);
+}
+#page-index .p1-button-purple {
+  color: white;
+  background: var(--purple);
+}
+#page-index .p1-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 92px 0 90px;
+  background: linear-gradient(112deg, #F4F1FF 0%, #FBFAFF 58%, #EFF9F2 100%);
+}
+#page-index .p1-hero::after {
+  content: '';
+  position: absolute;
+  width: 310px;
+  height: 310px;
+  right: -80px;
+  top: -115px;
+  border: 1px solid rgba(139, 112, 238, .18);
+  border-radius: 50%;
+  box-shadow: 0 0 0 36px rgba(139, 112, 238, .035), 0 0 0 72px rgba(139, 112, 238, .025);
+  pointer-events: none;
+}
+#page-index .p1-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 730px;
+}
+#page-index .p1-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  color: #476D55;
+  background: var(--mint);
+  font-size: .82rem;
+  font-weight: 700;
+}
+#page-index h1 {
+  max-width: 700px;
+  margin: 0;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+#page-index .p1-hero p {
+  max-width: 580px;
+  margin: 22px 0 30px;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+#page-index .p1-hero .p1-button {
+  min-height: 52px;
+  padding-inline: 25px;
+}
+#page-index .p1-section {
+  padding: 82px 0;
+}
+#page-index .p1-section-heading {
+  max-width: 630px;
+  margin-bottom: 34px;
+}
+#page-index .p1-section-heading h2 {
+  margin: 0 0 10px;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  letter-spacing: 0;
+}
+#page-index .p1-section-heading p {
+  margin: 0;
+  color: var(--muted);
+}
+#page-index .p1-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+#page-index .p1-step {
+  min-height: 235px;
+  padding: 27px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 30px rgba(139, 112, 238, 0.08);
+}
+#page-index .p1-step-number {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 24px;
+  border-radius: 14px;
+  color: #5E49B4;
+  background: white;
+  font-weight: 800;
+}
+#page-index .p1-step:nth-child(2) .p1-step-number {
+  color: #34855A;
+}
+#page-index .p1-step h3 {
+  margin: 0 0 8px;
+  font-size: 1.14rem;
+}
+#page-index .p1-step p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .95rem;
+}
+#page-index .p1-features {
+  padding: 42px 0 78px;
+}
+#page-index .p1-feature-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 32px;
+  border: 1px solid #DDEFE3;
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 30px rgba(139, 112, 238, 0.08);
+}
+#page-index .p1-feature-band h2 {
+  margin: 0 0 6px;
+  font-size: 1.55rem;
+}
+#page-index .p1-feature-band p {
+  margin: 0;
+  color: var(--muted);
+}
+#page-index footer {
+  padding: 26px 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .88rem;
+}
+@media (max-width: 760px) {
+#page-index .p1-nav-links {
+  display: none;
+}
+#page-index nav {
+  min-height: 68px;
+}
+#page-index .p1-nav-actions {
+  gap: 8px;
+}
+#page-index .p1-nav-actions .p1-button {
+  min-height: 40px;
+  padding-inline: 14px;
+  font-size: .88rem;
+}
+#page-index .p1-hero {
+  padding: 72px 0;
+}
+#page-index .p1-steps {
+  grid-template-columns: 1fr;
+}
+#page-index .p1-step {
+  min-height: 0;
+}
+#page-index .p1-feature-band {
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 25px;
+}
+#page-index .p1-section {
+  padding: 65px 0;
+}
+}
+
+/* ---------- Log in (Part 1) ---------- */
+#page-login {
+  color-scheme: light;
+  --ink: #1E1B2E;
+  --muted: #666477;
+  --lavender: #EAE6FF;
+  --purple: #8B70EE;
+  --mint: #E8F7EE;
+  --green: #4CAF78;
+  --line: #E9E6F1;
+}
+#page-login * {
+  box-sizing: border-box;
+}
+#page-login {
+  min-height: 100vh;
+  margin: 0;
+  place-items: center;
+  padding: 28px 18px;
+  color: #1E1B2E;
+  background: linear-gradient(135deg, #E6F7EF 0%, #EDE7FF 100%) !important;
+  font-family: 'Poppins', 'Inter', sans-serif;
+}
+#page-login .p1-link {
+  color: inherit;
+}
+#page-login .p1-wrap {
+  width: min(100%, 460px);
+}
+#page-login .p1-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  font-weight: 800;
+  font-size: 1.08rem;
+  text-decoration: none;
+}
+#page-login .p1-app-logo-frame {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+#page-login .p1-app-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(1.3);
+  transform-origin: 50% 20%;
+}
+#page-login .p1-card {
+  padding: clamp(26px, 6vw, 42px);
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 30px rgba(139, 112, 238, 0.08);
+  backdrop-filter: blur(12px);
+}
+#page-login h1 {
+  margin: 0 0 8px;
+  font-size: 1.85rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+#page-login .p1-intro {
+  margin: 0 0 28px;
+  color: var(--muted);
+}
+#page-login .p1-field {
+  margin-bottom: 19px;
+}
+#page-login .p1-lbl {
+  display: block;
+  margin-bottom: 7px;
+  font-size: .9rem;
+  font-weight: 700;
+}
+#page-login input {
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+}
+#page-login input:focus {
+  outline: 3px solid rgba(139,112,238,.2);
+  border-color: var(--purple);
+}
+#page-login .p1-submit {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 5px;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  background: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+#page-login .p1-submit:hover {
+  background: #39334F;
+}
+#page-login .p1-footer {
+  margin: 23px 0 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: .92rem;
+}
+#page-login .p1-footer .p1-link {
+  color: #6248C2;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Sign up (Part 1) ---------- */
+#page-signup {
+  color-scheme: light;
+  --ink: #1E1B2E;
+  --muted: #666477;
+  --lavender: #EAE6FF;
+  --purple: #8B70EE;
+  --mint: #E8F7EE;
+  --green: #4CAF78;
+  --line: #E9E6F1;
+}
+#page-signup * {
+  box-sizing: border-box;
+}
+#page-signup {
+  min-height: 100vh;
+  margin: 0;
+  place-items: center;
+  padding: 30px 18px;
+  color: #1E1B2E;
+  background: linear-gradient(135deg, #E6F7EF 0%, #EDE7FF 100%) !important;
+  font-family: 'Poppins', 'Inter', sans-serif;
+}
+#page-signup .p1-link {
+  color: inherit;
+}
+#page-signup .p1-wrap {
+  width: min(100%, 560px);
+}
+#page-signup .p1-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-weight: 800;
+  font-size: 1.08rem;
+  text-decoration: none;
+}
+#page-signup .p1-app-logo-frame {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+#page-signup .p1-app-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(1.3);
+  transform-origin: 50% 20%;
+}
+#page-signup .p1-card {
+  padding: clamp(25px, 5vw, 40px);
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 30px rgba(139, 112, 238, 0.08);
+  backdrop-filter: blur(12px);
+}
+#page-signup h1 {
+  margin: 0 0 8px;
+  font-size: 1.85rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+#page-signup .p1-intro {
+  margin: 0 0 26px;
+  color: var(--muted);
+}
+#page-signup .p1-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+#page-signup .p1-field {
+  margin-bottom: 17px;
+}
+#page-signup .p1-field.p1-full {
+  grid-column: 1 / -1;
+}
+#page-signup .p1-field-error {
+  margin: 6px 0 0;
+  color: #B42318;
+  font-size: .82rem;
+}
+#page-signup .p1-lbl {
+  display: block;
+  margin-bottom: 7px;
+  font-size: .9rem;
+  font-weight: 700;
+}
+#page-signup input,
+#page-signup select {
+  width: 100%;
+  min-height: 47px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+}
+#page-signup input:focus,
+#page-signup select:focus {
+  outline: 3px solid rgba(139,112,238,.2);
+  border-color: var(--purple);
+}
+#page-signup .p1-submit {
+  width: 100%;
+  min-height: 50px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  background: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+#page-signup .p1-submit:hover {
+  background: #39334F;
+}
+#page-signup .p1-footer {
+  margin: 21px 0 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: .92rem;
+}
+#page-signup .p1-footer .p1-link {
+  color: #6248C2;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+@media (max-width: 520px) {
+#page-signup .p1-fields {
+  grid-template-columns: 1fr;
+}
+#page-signup .p1-field.p1-full {
+  grid-column: auto;
+}
+}
+
+/* ---------- Edit profile (Part 1) ---------- */
+#page-editprofile {
+  color-scheme: light;
+  --ink: #1E1B2E;
+  --muted: #666477;
+  --lavender: #EAE6FF;
+  --purple: #8B70EE;
+  --mint: #E8F7EE;
+  --green: #4CAF78;
+  --line: #E9E6F1;
+  --paper: #FCFBFF;
+}
+#page-editprofile * {
+  box-sizing: border-box;
+}
+#page-editprofile {
+  min-height: 100vh;
+  margin: 0;
+  color: #1E1B2E;
+  background: linear-gradient(135deg, #E6F7EF 0%, #EDE7FF 100%) !important;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  line-height: 1.55;
+}
+#page-editprofile header {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(110deg, #F1EDFF, #F8FCF8);
+}
+#page-editprofile .p1-shell {
+  width: min(980px, 100%);
+  margin-inline: auto;
+}
+#page-editprofile .p1-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+#page-editprofile .p1-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  text-decoration: none;
+}
+#page-editprofile .p1-app-logo-frame {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+#page-editprofile .p1-app-logo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scale(1.3);
+  transform-origin: 50% 20%;
+}
+#page-editprofile .p1-back {
+  color: #604AB8;
+  font-size: .9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+#page-editprofile .p1-main {
+  padding: 42px 20px 70px;
+}
+#page-editprofile h1 {
+  margin: 0 0 7px;
+  font-size: clamp(1.8rem, 4vw, 2.35rem);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+#page-editprofile .p1-lead {
+  margin: 0 0 28px;
+  color: var(--muted);
+}
+#page-editprofile form {
+  display: grid;
+  gap: 18px;
+}
+#page-editprofile .p1-panel {
+  min-width: 0;
+  padding: clamp(20px, 4vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 30px rgba(139, 112, 238, 0.08);
+}
+#page-editprofile .p1-panel h2 {
+  margin: 0 0 18px;
+  font-size: 1.12rem;
+}
+#page-editprofile .p1-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+#page-editprofile .p1-avatar {
+  width: 78px;
+  height: 78px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 3px solid var(--lavender);
+  border-radius: 50%;
+  color: #6756B1;
+  background: #F7F4FF;
+  font-size: 1.8rem;
+}
+#page-editprofile .p1-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#page-editprofile .p1-avatar img.p1-logo-preview {
+  transform: scale(1.25);
+}
+#page-editprofile .p1-upload .p1-lbl,
+#page-editprofile .p1-field-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: .9rem;
+  font-weight: 700;
+}
+#page-editprofile input[type="file"] {
+  max-width: 100%;
+  color: var(--muted);
+  font: inherit;
+  font-size: .88rem;
+}
+#page-editprofile input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+  cursor: pointer;
+}
+#page-editprofile textarea {
+  width: 100%;
+  min-height: 104px;
+  resize: vertical;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  background: white;
+  font: inherit;
+}
+#page-editprofile textarea:focus,
+#page-editprofile input:focus-visible {
+  outline: 3px solid rgba(139,112,238,.2);
+  border-color: var(--purple);
+}
+#page-editprofile .p1-hint {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+#page-editprofile .p1-subject-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+#page-editprofile fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+#page-editprofile legend {
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+#page-editprofile .p1-tags,
+#page-editprofile .p1-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+#page-editprofile .p1-tag,
+#page-editprofile .p1-choice {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+}
+#page-editprofile .p1-tag input,
+#page-editprofile .p1-choice input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+#page-editprofile .p1-tag span,
+#page-editprofile .p1-choice span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 7px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #4E4B5C;
+  background: #fff;
+  font-size: .86rem;
+  transition: background .15s, border-color .15s, color .15s;
+}
+#page-editprofile .p1-tag input:checked + span {
+  border-color: #BDB0FA;
+  color: #5D47B8;
+  background: var(--lavender);
+}
+#page-editprofile .p1-choice input:checked + span {
+  border-color: #91D1A9;
+  color: #276B43;
+  background: var(--mint);
+}
+#page-editprofile .p1-tag input:focus-visible + span,
+#page-editprofile .p1-choice input:focus-visible + span {
+  outline: 3px solid rgba(139,112,238,.3);
+  outline-offset: 2px;
+}
+#page-editprofile .p1-preference-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+}
+#page-editprofile .p1-preference-grid legend {
+  margin-bottom: 10px;
+}
+#page-editprofile .p1-availability-scroll {
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+#page-editprofile .p1-availability {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid #D7EBDD;
+  border-radius: 12px;
+}
+#page-editprofile .p1-availability th,
+#page-editprofile .p1-availability td {
+  height: 54px;
+  padding: 9px;
+  border-right: 1px solid #E1EBE4;
+  border-bottom: 1px solid #E1EBE4;
+  text-align: center;
+}
+#page-editprofile .p1-availability tr:last-child th,
+#page-editprofile .p1-availability tr:last-child td {
+  border-bottom: 0;
+}
+#page-editprofile .p1-availability th:last-child,
+#page-editprofile .p1-availability td:last-child {
+  border-right: 0;
+}
+#page-editprofile .p1-availability thead th {
+  color: #3F6F51;
+  background: var(--mint);
+  font-size: .85rem;
+}
+#page-editprofile .p1-availability tbody th {
+  width: 170px;
+  color: #564993;
+  background: #F3F0FF;
+  text-align: left;
+  font-size: .83rem;
+  white-space: nowrap;
+}
+#page-editprofile .p1-availability td {
+  background: #fff;
+}
+#page-editprofile .p1-availability input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+#page-editprofile .p1-save-row {
+  display: flex;
+  justify-content: flex-end;
+}
+#page-editprofile .p1-submit {
+  min-height: 50px;
+  padding: 0 25px;
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  background: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+#page-editprofile .p1-submit:hover {
+  background: #39334F;
+}
+@media (max-width: 680px) {
+#page-editprofile .p1-subject-groups,
+#page-editprofile .p1-preference-grid {
+  grid-template-columns: 1fr;
+}
+#page-editprofile .p1-topline {
+  align-items: flex-start;
+}
+#page-editprofile .p1-main {
+  padding-top: 30px;
+}
+#page-editprofile .p1-save-row .p1-submit {
+  width: 100%;
+}
+}
+
+/* ---------- Dashboard ---------- */
+#page-dashboard .welcome h1 {
+  font-family: 'Abril Fatface', serif;
+  font-size: 72px;
+  color: #1C3440;
+  margin: 10px 0 4px;
+}
+#page-dashboard .subtitle {
+  font-size: 17px;
+  color: #5E5A6E;
+  margin: 0 0 28px;
+}
+#page-dashboard .highlight {
+  color: #7A63C4;
+  font-weight: 600;
+}
+#page-dashboard .matches-box {
+  background-color: rgba(255, 255, 255, 0.75);
+  border-radius: 28px;
+  padding: 24px 32px 32px;
+  box-shadow: 0 10px 30px rgba(108, 91, 168, 0.15);
+}
+#page-dashboard .matches-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#page-dashboard .matches-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+#page-dashboard .see-all {
+  font-weight: 600;
+  color: #7A63C4;
+  border-bottom: 2px solid #7A63C4;
+  transition: color 0.3s, border-color 0.3s;
+}
+#page-dashboard .see-all:hover {
+  color: #1C3440;
+  border-color: #1C3440;
+}
+#page-dashboard .cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  margin-top: 28px;
+}
+#page-dashboard .student-card:first-child {
+  border: 2px solid #9C87D6;
+}
+#page-dashboard .student-card:first-child::before {
+  content: "★ Top match";
+  position: absolute;
+  top: -13px;
+  left: 20px;
+  background-color: #9C87D6;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+#page-dashboard .btn-request {
+  width: 78%;
+  background-color: #1E1E2A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 30px;
+  padding: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.3s, background-color 0.3s;
+}
+#page-dashboard .btn-request:hover {
+  background-color: #7A63C4;
+  transform: scale(1.05);
+}
+@media (max-width: 900px) {
+#page-dashboard .cards-grid {
+  grid-template-columns: 1fr 1fr;
+}
+#page-dashboard .welcome h1 {
+  font-size: 54px;
+}
+}
+@media (max-width: 600px) {
+#page-dashboard .cards-grid {
+  grid-template-columns: 1fr;
+}
+#page-dashboard .welcome h1 {
+  font-size: 40px;
+}
+#page-dashboard .matches-box {
+  padding: 20px;
+}
+}
+
+/* ---------- Find Peers ---------- */
+#page-find .page-title {
+  font-size: 34px;
+  font-weight: 600;
+  color: #1C3440;
+  margin: 10px 0 4px;
+}
+#page-find .page-subtitle {
+  color: #5E5A6E;
+  margin: 0 0 24px;
+}
+#page-find .search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+#page-find .search-bar input[type="text"] {
+  width: 100%;
+  padding: 14px 22px;
+  border: 2px solid #D9CFF2;
+  border-radius: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  background-color: #FFFFFF;
+}
+#page-find .search-bar input[type="text"]:focus {
+  border-color: #9C87D6;
+  outline: none;
+}
+#page-find .find-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+#page-find .filters h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+#page-find .filter-group {
+  margin-top: 18px;
+}
+#page-find .filter-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6E6A7C;
+  margin: 0 0 8px;
+}
+#page-find .filters select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #D9CFF2;
+  border-radius: 14px;
+  font-family: 'Poppins', sans-serif;
+  background-color: #FFFFFF;
+}
+#page-find .option {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+#page-find .day-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+#page-find .filters input {
+  accent-color: #7A63C4;
+}
+#page-find .filter-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+#page-find .results-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+#page-find .results-count {
+  font-weight: 600;
+}
+#page-find .results-top select {
+  padding: 8px 12px;
+  border: 2px solid #D9CFF2;
+  border-radius: 14px;
+  font-family: 'Poppins', sans-serif;
+  background-color: #FFFFFF;
+}
+#page-find .results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+#page-find .empty-state {
+  text-align: center;
+  padding: 30px;
+  margin-top: 24px;
+  border: 2px dashed #C9BDEB;
+  border-radius: 20px;
+  color: #6E6A7C;
+}
+#page-find .empty-state h3 {
+  color: #1C3440;
+  margin: 0 0 6px;
+}
+@media (max-width: 900px) {
+#page-find .find-layout {
+  grid-template-columns: 1fr;
+}
+}
+@media (max-width: 600px) {
+#page-find .results-grid {
+  grid-template-columns: 1fr;
+}
+#page-find .page-title {
+  font-size: 26px;
+}
+}
+
+/* ---------- Student profile ---------- */
+#page-profile .back-link {
+  display: inline-block;
+  margin: 6px 0 18px;
+  font-weight: 500;
+  color: #7A63C4;
+}
+#page-profile .back-link:hover {
+  text-decoration: underline;
+}
+#page-profile .profile-header {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+}
+#page-profile .big-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #E6DFF3;
+  color: #6B5BA8;
+  font-size: 42px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #FFFFFF;
+  box-shadow: 0 6px 16px rgba(108, 91, 168, 0.2);
+}
+#page-profile .profile-name {
+  font-size: 30px;
+  font-weight: 600;
+  color: #1C3440;
+  margin: 0;
+}
+#page-profile .profile-branch {
+  color: #6E6A7C;
+  margin: 2px 0 10px;
+}
+#page-profile .profile-bio {
+  margin: 0 0 16px;
+  max-width: 520px;
+  line-height: 1.6;
+}
+#page-profile .profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#page-profile .match-circle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background-color: #9C87D6;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#page-profile .match-number {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+}
+#page-profile .match-word {
+  font-size: 12px;
+}
+#page-profile .more-menu {
+  position: relative;
+}
+#page-profile .more-menu summary {
+  list-style: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 2px solid #9C87D6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+#page-profile .menu-box {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  background-color: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  width: 170px;
+  z-index: 10;
+}
+#page-profile .menu-box label {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #C2414F;
+}
+#page-profile .menu-box label:hover {
+  background-color: #FCEBEB;
+}
+#page-profile .details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+#page-profile .section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+#page-profile .pref-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #E6DFF3;
+}
+#page-profile .pref-row:last-child {
+  border-bottom: none;
+}
+#page-profile .pref-label {
+  color: #6E6A7C;
+}
+#page-profile .pref-value {
+  font-weight: 500;
+}
+#page-profile .timetable-panel {
+  margin-top: 24px;
+}
+#page-profile .timetable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 6px;
+  margin-top: 12px;
+}
+#page-profile .timetable th {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6E6A7C;
+  padding: 6px;
+}
+#page-profile .timetable td {
+  height: 44px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  text-align: center;
+  font-size: 12px;
+}
+#page-profile .timetable td.free {
+  background-color: #E6DFF3;
+}
+#page-profile .timetable td.both {
+  background-color: #9C87D6;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+#page-profile .legend {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  margin-top: 10px;
+}
+#page-profile .legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#page-profile .key {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #D9CFF2;
+}
+@media (max-width: 700px) {
+#page-profile .profile-header {
+  flex-direction: column;
+  text-align: center;
+}
+#page-profile .profile-actions {
+  justify-content: center;
+}
+#page-profile .match-circle {
+  position: static;
+}
+#page-profile .details-grid {
+  grid-template-columns: 1fr;
+}
+#page-profile .panel {
+  padding: 16px;
+}
+#page-profile .timetable {
+  border-spacing: 3px;
+}
+#page-profile .timetable th {
+  font-size: 11px;
+  padding: 2px;
+}
+#page-profile .timetable td {
+  height: 32px;
+  font-size: 10px;
+}
+#page-profile .legend {
+  flex-direction: column;
+  gap: 6px;
+}
+}
+
+/* ---------- My profile ---------- */
+#page-myprofile .back-link {
+  display: inline-block;
+  margin: 6px 0 18px;
+  font-weight: 500;
+  color: #7A63C4;
+}
+#page-myprofile .back-link:hover {
+  text-decoration: underline;
+}
+#page-myprofile .profile-header {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+}
+#page-myprofile .big-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #E6DFF3;
+  color: #6B5BA8;
+  font-size: 42px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #FFFFFF;
+  box-shadow: 0 6px 16px rgba(108, 91, 168, 0.2);
+}
+#page-myprofile .profile-name {
+  font-size: 30px;
+  font-weight: 600;
+  color: #1C3440;
+  margin: 0;
+}
+#page-myprofile .profile-branch {
+  color: #6E6A7C;
+  margin: 2px 0 10px;
+}
+#page-myprofile .profile-bio {
+  margin: 0 0 16px;
+  max-width: 520px;
+  line-height: 1.6;
+}
+#page-myprofile .profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#page-myprofile .match-circle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background-color: #9C87D6;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+#page-myprofile .match-number {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+}
+#page-myprofile .match-word {
+  font-size: 12px;
+}
+#page-myprofile .more-menu {
+  position: relative;
+}
+#page-myprofile .more-menu summary {
+  list-style: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 2px solid #9C87D6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  cursor: pointer;
+}
+#page-myprofile .menu-box {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  background-color: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  width: 170px;
+  z-index: 10;
+}
+#page-myprofile .menu-box label {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #C2414F;
+}
+#page-myprofile .menu-box label:hover {
+  background-color: #FCEBEB;
+}
+#page-myprofile .details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+#page-myprofile .section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+#page-myprofile .pref-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #E6DFF3;
+}
+#page-myprofile .pref-row:last-child {
+  border-bottom: none;
+}
+#page-myprofile .pref-label {
+  color: #6E6A7C;
+}
+#page-myprofile .pref-value {
+  font-weight: 500;
+}
+#page-myprofile .timetable-panel {
+  margin-top: 24px;
+}
+#page-myprofile .timetable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 6px;
+  margin-top: 12px;
+}
+#page-myprofile .timetable th {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6E6A7C;
+  padding: 6px;
+}
+#page-myprofile .timetable td {
+  height: 44px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  text-align: center;
+  font-size: 12px;
+}
+#page-myprofile .timetable td.free {
+  background-color: #E6DFF3;
+}
+#page-myprofile .timetable td.both {
+  background-color: #9C87D6;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+#page-myprofile .timetable td.mine {
+  background-color: #9C87D6;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+#page-myprofile .own-note {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background-color: #E6DFF3;
+  color: #6B5BA8;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+#page-myprofile .legend {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  margin-top: 10px;
+}
+#page-myprofile .legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#page-myprofile .key {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #D9CFF2;
+}
+@media (max-width: 700px) {
+#page-myprofile .profile-header {
+  flex-direction: column;
+  text-align: center;
+}
+#page-myprofile .profile-actions {
+  justify-content: center;
+}
+#page-myprofile .match-circle,
+#page-myprofile .own-note {
+  position: static;
+}
+#page-myprofile .details-grid {
+  grid-template-columns: 1fr;
+}
+#page-myprofile .panel {
+  padding: 16px;
+}
+#page-myprofile .timetable {
+  border-spacing: 3px;
+}
+#page-myprofile .timetable th {
+  font-size: 11px;
+  padding: 2px;
+}
+#page-myprofile .timetable td {
+  height: 32px;
+  font-size: 10px;
+}
+#page-myprofile .legend {
+  flex-direction: column;
+  gap: 6px;
+}
+}
+
+/* ---------- Requests ---------- */
+#page-requests .tab-radio {
+  position: absolute;
+  opacity: 0;
+}
+#page-requests .tab-labels {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+#page-requests .tab-labels label {
+  padding: 8px 22px;
+  border-radius: 30px;
+  border: 2px solid #1C3440;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+#page-requests .tab-labels label:hover {
+  background-color: #E6DFF3;
+}
+#page-requests .tab-panel {
+  display: none;
+}
+#page-requests #tab-in:checked ~ .panel-in,
+#page-requests #tab-sent:checked ~ .panel-sent {
+  display: block;
+}
+#page-requests #tab-in:checked ~ .tab-labels label[for="tab-in"],
+#page-requests #tab-sent:checked ~ .tab-labels label[for="tab-sent"] {
+  background-color: #1C3440;
+  color: #FFFFFF;
+}
+#page-requests #tab-in:focus ~ .tab-labels label[for="tab-in"],
+#page-requests #tab-sent:focus ~ .tab-labels label[for="tab-sent"] {
+  outline: 3px solid #9C87D6;
+}
+#page-requests .request-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+#page-requests .request-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+#page-requests .request-actions form {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+#page-requests .request-actions form button {
+  flex: 1;
+  padding: 12px 8px;
+}
+#page-requests .table-wrap {
+  overflow-x: auto;
+}
+#page-requests table.sent {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+#page-requests .sent th,
+#page-requests .sent td {
+  padding: 12px 14px;
+  text-align: left;
+}
+#page-requests .sent thead th {
+  background-color: #1C3440;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+#page-requests .sent tbody tr:nth-child(even) {
+  background-color: #F6F2FC;
+}
+#page-requests .sent tbody tr:hover {
+  background-color: #E6DFF3;
+}
+#page-requests .status {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+#page-requests .status.pending {
+  background-color: #FDEEC2;
+}
+#page-requests .status.accepted {
+  background-color: #D5ECE4;
+  color: #2E6B57;
+}
+#page-requests .status.rejected {
+  background-color: #F7D4D0;
+  color: #8E2B35;
+}
+#page-requests .btn-small {
+  padding: 6px 16px;
+  font-size: 13px;
+}
+@media (max-width: 900px) {
+#page-requests .request-grid {
+  grid-template-columns: 1fr 1fr;
+}
+}
+@media (max-width: 600px) {
+#page-requests .request-grid {
+  grid-template-columns: 1fr;
+}
+}
+
+/* ---------- Messages ---------- */
+#page-messages .chat-layout {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  height: 580px;
+  padding: 0;
+  overflow: hidden;
+}
+#page-messages .chat-list {
+  border-right: 2px solid #E6DFF3;
+  overflow-y: auto;
+  padding: 18px;
+}
+#page-messages .chat-list h2 {
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+#page-messages .chat-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#page-messages .chat-list a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  transition: background-color 0.3s;
+}
+#page-messages .chat-list a:hover {
+  background-color: #E6DFF3;
+}
+#page-messages .chat-list .avatar {
+  flex: none;
+  background-color: #E6DFF3;
+}
+#page-messages .chat-list a:hover .avatar {
+  background-color: #FFFFFF;
+}
+#page-messages .info {
+  flex: 1;
+  min-width: 0;
+}
+#page-messages .info strong {
+  display: block;
+  font-size: 15px;
+}
+#page-messages .info small {
+  display: block;
+  color: #6E6A7C;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#page-messages .unread {
+  background-color: #E35D6A;
+  color: #FFFFFF;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 8px;
+}
+#page-messages .chat-area {
+  min-width: 0;
+}
+#page-messages .chat-window {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+}
+#page-messages .chat-window.is-active,
+#page-messages .chat-window:target {
+  display: flex;
+}
+#page-messages .chat-default {
+  display: flex;
+}
+#page-messages .chat-window.is-active ~ .chat-default,
+#page-messages .chat-window:target ~ .chat-default {
+  display: none;
+}
+#page-messages .chat-list a.is-active {
+  background-color: #EFE9FA;
+  border-left: 4px solid #7A63C4;
+}
+#page-messages .chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background-color: #E6DFF3;
+}
+#page-messages .chat-header .avatar {
+  background-color: #FFFFFF;
+}
+#page-messages .chat-header h2 {
+  font-size: 16px;
+  margin: 0;
+}
+#page-messages .chat-header p {
+  font-size: 12px;
+  color: #6E6A7C;
+  margin: 0;
+}
+#page-messages .chat-header p.online::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background-color: #3FBF6B;
+}
+#page-messages .chat-links {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+#page-messages .btn-small {
+  padding: 6px 16px;
+  font-size: 13px;
+}
+#page-messages .messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background-color: #F6F2FC;
+}
+#page-messages .bubble {
+  max-width: 72%;
+  margin: 0;
+  padding: 9px 14px;
+  font-size: 14px;
+  background-color: #FFFFFF;
+  border-radius: 18px 18px 18px 4px;
+}
+#page-messages .bubble time {
+  display: block;
+  font-size: 11px;
+  opacity: 0.65;
+  margin-top: 2px;
+}
+#page-messages .bubble.sent {
+  align-self: flex-end;
+  background-color: #9C87D6;
+  color: #FFFFFF;
+  border-radius: 18px 18px 4px 18px;
+}
+#page-messages .chat-form {
+  display: flex;
+  gap: 10px;
+  padding: 14px 18px;
+  background-color: #FFFFFF;
+  border-top: 2px solid #E6DFF3;
+}
+#page-messages .chat-form input[type="text"] {
+  flex: 1;
+  padding: 10px 20px;
+  border: 2px solid #D9CFF2;
+  border-radius: 30px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+}
+#page-messages .chat-form input[type="text"]:focus {
+  border-color: #9C87D6;
+  outline: none;
+}
+@media (max-width: 900px) {
+#page-messages .chat-layout {
+  grid-template-columns: 1fr;
+  height: auto;
+}
+#page-messages .chat-list {
+  border-right: none;
+  border-bottom: 2px solid #E6DFF3;
+  max-height: 250px;
+}
+#page-messages .chat-window,
+#page-messages .chat-default {
+  min-height: 480px;
+}
+}
+@media (max-width: 600px) {
+#page-messages .bubble {
+  max-width: 90%;
+}
+#page-messages .chat-header {
+  flex-wrap: wrap;
+}
+}
+
+/* ---------- Settings ---------- */
+#page-settings .two-col {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+#page-settings .panel h2 {
+  font-size: 18px;
+  margin: 0 0 16px;
+}
+#page-settings .hint {
+  color: #6E6A7C;
+  font-size: 14px;
+  margin: -8px 0 16px;
+}
+#page-settings .setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+#page-settings .setting-row p {
+  margin: 0;
+}
+#page-settings .setting-row small {
+  display: block;
+  color: #6E6A7C;
+}
+#page-settings input[type="checkbox"].switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 50px;
+  height: 28px;
+  border-radius: 30px;
+  background-color: #C9C2D6;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+#page-settings input[type="checkbox"].switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  transition: transform 0.3s;
+}
+#page-settings input[type="checkbox"].switch:checked {
+  background-color: #9C87D6;
+}
+#page-settings input[type="checkbox"].switch:checked::after {
+  transform: translateX(22px);
+}
+#page-settings .field select {
+  max-width: 320px;
+}
+#page-settings .btn-small {
+  padding: 6px 16px;
+  font-size: 13px;
+}
+#page-settings .blocked-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#page-settings .blocked-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background-color: #E6DFF3;
+  border-radius: 16px;
+}
+#page-settings .blocked-list li div {
+  flex: 1;
+  min-width: 0;
+}
+#page-settings .blocked-list strong {
+  display: block;
+}
+#page-settings .blocked-list small {
+  color: #6E6A7C;
+}
+#page-settings .blocked-list form {
+  margin: 0;
+}
+@media (max-width: 900px) {
+#page-settings .two-col {
+  grid-template-columns: 1fr;
+}
+}
+
+/* ---------- Report a user ---------- */
+#page-report .report-panel {
+  max-width: 760px;
+  margin: 0 auto;
+}
+#page-report .report-panel h2 {
+  font-size: 18px;
+  margin: 0 0 6px;
+}
+#page-report .hint {
+  color: #6E6A7C;
+  font-size: 14px;
+  margin: 0 0 18px;
+}
+#page-report .note {
+  font-size: 12px;
+  color: #6E6A7C;
+}
+#page-report .star {
+  color: #C2414F;
+}
+
+:root {
+  --sb-logo: url("data:image/png;base64,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");
+}
+img.logo,
+img.p1-app-logo,
+img.p1-logo-preview {
+  background-image: var(--sb-logo);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* the <img> src is a 1x1 transparent gif, so the logo is stored once (in --sb-logo) instead of six times */
+}
+
+#pg-settings:checked ~ .navbar label[for="pg-myprofile"],
+#pg-report:checked ~ .navbar label[for="pg-myprofile"] {
+  color: #7A63C4;
+}
+
+/* ---------- Phone fixes ---------- */
+/* landing page: keep "Sign Up" on one line */
+#page-index .p1-button {
+  white-space: nowrap;
+}
+
+/* chat: let the message box shrink so the Send button stays on screen */
+#page-messages .chat-form input[type="text"] {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  /* edit profile: photo picker wraps under the avatar instead of pushing the page sideways */
+  #page-editprofile .p1-photo-row {
+    flex-wrap: wrap;
+  }
+  #page-editprofile .p1-upload {
+    min-width: 0;
+    max-width: 100%;
+  }
+  #page-editprofile input[type="file"] {
+    width: 100%;
+  }
+}
+  
+
+/* ===== Project-wide consistency and interaction polish ===== */
+#page-login, #page-signup, #page-index, #page-editprofile { background: linear-gradient(135deg, #E6F7EF 0%, #EDE7FF 100%) !important; }
+#page-login .p1-submit, #page-signup .p1-submit, #page-editprofile .p1-submit { display:flex; align-items:center; justify-content:center; border:0; text-decoration:none; }
+#page-login .p1-submit:disabled, #page-signup .p1-submit:disabled, #page-editprofile .p1-submit:disabled { opacity:.55; cursor:not-allowed; }
+.form-feedback { margin:12px 0 0; padding:10px 13px; border-radius:10px; font-size:.9rem; background:#FFF4E5; color:#805500; }
+.form-feedback.success { background:#E8F7EE; color:#276B43; }
+.request-note { margin:10px 0 0; padding:7px 10px; border-radius:10px; font-size:.82rem; font-weight:500; background:#E8F7EE; color:#276B43; }
+.student-card.is-hidden { display:none !important; }
+.empty-state.is-hidden { display:none !important; }
+button:focus-visible, a:focus-visible, label:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid rgba(139,112,238,.35); outline-offset:2px; }
+@media (max-width:600px) { .navbar { align-items:stretch; } .nav-left,.nav-right { justify-content:center; flex-wrap:wrap; gap:12px; } }
+
+
+/* ===== Final visual correction: use the MAIN APP theme on every page =====
+/* The dashboard/main application palette is the source of truth. The landing,
+   login, signup and profile-setup pages keep their layouts, but no longer use
+   their separate mint/Inter/black visual theme. */
+#page-index,
+#page-login,
+#page-signup,
+#page-editprofile {
+  color: #1E1E2A !important;
+  background: transparent !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+#page-index h1,
+#page-login h1,
+#page-signup h1,
+#page-editprofile h1,
+#page-index h2,
+#page-editprofile h2 {
+  color: #1C3440;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Main app uses the same soft translucent white panels throughout. */
+#page-login .p1-card,
+#page-signup .p1-card,
+#page-editprofile .p1-panel,
+#page-index .p1-step,
+#page-index .p1-feature-band {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 0 !important;
+  border-radius: 28px !important;
+  box-shadow: 0 10px 30px rgba(108, 91, 168, 0.15) !important;
+}
+
+#page-index header,
+#page-editprofile header {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border-bottom: 1px solid rgba(217, 207, 242, 0.7) !important;
+  backdrop-filter: blur(10px);
+}
+#page-index .p1-hero,
+#page-index .p1-section,
+#page-index .p1-features {
+  background: transparent !important;
+}
+#page-index .p1-hero h1 {
+  color: #1C3440 !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+#page-index .p1-hero p,
+#page-index .p1-section-heading p,
+#page-index .p1-step p,
+#page-index .p1-feature-band p,
+#page-login .p1-intro,
+#page-signup .p1-intro,
+#page-editprofile .p1-lead,
+#page-editprofile .p1-hint {
+  color: #5E5A6E !important;
+}
+#page-index .p1-eyebrow {
+  color: #2E6B57 !important;
+  background: #D5ECE4 !important;
+}
+#page-index .p1-step-number {
+  color: #6B5BA8 !important;
+  background: #E6DFF3 !important;
+}
+#page-index .p1-button-dark,
+#page-index .p1-button-purple,
+#page-login .p1-submit,
+#page-signup .p1-submit,
+#page-editprofile .p1-submit {
+  color: #FFFFFF !important;
+  background: #1E1E2A !important;
+  border-color: #1E1E2A !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+#page-index .p1-button-dark:hover,
+#page-index .p1-button-purple:hover,
+#page-login .p1-submit:hover,
+#page-signup .p1-submit:hover,
+#page-editprofile .p1-submit:hover {
+  background: #7A63C4 !important;
+  border-color: #7A63C4 !important;
+}
+#page-index .p1-button-outline {
+  color: #1E1E2A !important;
+  background: #FFFFFF !important;
+  border: 2px solid #9C87D6 !important;
+}
+#page-login input,
+#page-signup input,
+#page-signup select,
+#page-editprofile textarea {
+  color: #1E1E2A !important;
+  background: #FFFFFF !important;
+  border: 2px solid #D9CFF2 !important;
+  border-radius: 14px !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+#page-login input:focus,
+#page-signup input:focus,
+#page-signup select:focus,
+#page-editprofile textarea:focus,
+#page-editprofile input:focus-visible {
+  border-color: #9C87D6 !important;
+  box-shadow: 0 0 0 4px rgba(156, 135, 214, 0.25) !important;
+  outline: none;
+}
+#page-login .p1-lbl,
+#page-signup .p1-lbl,
+#page-editprofile .p1-lbl,
+#page-editprofile legend {
+  color: #1E1E2A !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+#page-login .p1-footer,
+#page-signup .p1-footer,
+#page-login .p1-footer .p1-link,
+#page-signup .p1-footer .p1-link,
+#page-editprofile .p1-back {
+  color: #7A63C4 !important;
+}
+#page-index footer {
+  color: #5E5A6E !important;
+  border-top-color: rgba(217, 207, 242, 0.7) !important;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- ===== Page switcher: hidden radio buttons (labels select them) ===== -->
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-index" checked aria-label="Landing page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-login" aria-label="Log in page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-signup" aria-label="Sign up page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-editprofile" aria-label="Edit profile page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-dashboard" aria-label="Dashboard page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-find" aria-label="Find Peers page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-profile" aria-label="Student profile page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-myprofile" aria-label="My profile page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-requests" aria-label="Requests page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-messages" aria-label="Messages page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-settings" aria-label="Settings page">
+  <input class="page-radio" type="radio" tabindex="-1" name="page" id="pg-report" aria-label="Report a user page">
+
+  <!-- Background circles -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+
+  <!-- ===== NAVBAR (shown on every page after login) ===== -->
+  <header class="navbar">
+    <div class="nav-left">
+      <label for="pg-dashboard" class="logo-link"><img class="logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="StudyBuddy logo"></label>
+      <label for="pg-dashboard" class="nav-btn">Home</label>
+      <label for="pg-find" class="nav-btn">Find Peers</label>
+    </div>
+
+    <div class="nav-right">
+      <label for="pg-messages" class="icon-link">
+        <div class="icon-message">•••</div>
+        <span class="badge">2</span>
+        Messages
+      </label>
+      <label for="pg-myprofile" class="icon-link">
+        <div class="icon-profile"></div>
+        Profile
+      </label>
+      <label for="pg-requests" class="icon-link">
+        <div class="icon-requests">➤</div>
+        <span class="badge">3</span>
+        Requests
+      </label>
+    </div>
+  </header>
+
+  <!-- ===================== PAGE: LANDING PAGE ===================== -->
+  <section class="page p1-page" id="page-index" aria-label="Landing page">
+<header>
+<nav class="p1-shell" aria-label="Main navigation">
+<label class="p1-brand p1-link" for="pg-index" aria-label="StudyBuddy home"><span class="p1-app-logo-frame"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="StudyBuddy Logo" class="p1-app-logo"></span><span>StudyBuddy</span></label>
+<div class="p1-nav-links"><a href="#index-how-it-works" class="p1-link">How it works</a><a href="#index-features" class="p1-link">Features</a></div>
+<div class="p1-nav-actions"><label class="p1-button p1-button-outline p1-link" for="pg-login">Login</label><label class="p1-button p1-button-dark p1-link" for="pg-signup">Sign Up</label></div>
+</nav>
+</header>
+<div class="p1-main">
+<section class="p1-hero">
+<div class="p1-shell p1-hero-content">
+<span class="p1-eyebrow">Better study days start together</span>
+<h1>Find Your Perfect Study Partner</h1>
+<p>Meet classmates who share your subjects, schedule, and study style. Make learning feel a little less like doing it alone.</p>
+<label class="p1-button p1-button-purple p1-link" for="pg-signup">Get Started <span aria-hidden="true">&nbsp;→</span></label>
+</div>
+</section>
+<section class="p1-section p1-shell" id="index-how-it-works">
+<div class="p1-section-heading"><h2>A better way to study, in three steps</h2><p>From setting your goals to finding a rhythm that works, your next great study session starts here.</p></div>
+<div class="p1-steps">
+<article class="p1-step"><div class="p1-step-number">01</div><h3>Create Your Profile</h3><p>Set your subjects, strengths, and availability so the right people can find you.</p></article>
+<article class="p1-step"><div class="p1-step-number">02</div><h3>Match &amp; Filter</h3><p>Find peers by branch, subject, study style, and the times that work for you.</p></article>
+<article class="p1-step"><div class="p1-step-number">03</div><h3>Connect &amp; Collaborate</h3><p>Send a request, start a conversation, and learn something together.</p></article>
+</div>
+</section>
+<section class="p1-features p1-shell" id="index-features">
+<div class="p1-feature-band"><div><h2>Make your next study session count.</h2><p>Build your profile and find your people on campus.</p></div><label class="p1-button p1-button-dark p1-link" for="pg-signup">Create your account</label></div>
+</section>
+</div>
+<footer><div class="p1-shell p1-main">StudyBuddy · Learn better together</div></footer>
+</section>
+
+  <!-- ===================== PAGE: LOG IN ===================== -->
+  <section class="page p1-page" id="page-login" aria-label="Log in">
+<div class="p1-wrap p1-main">
+<label class="p1-brand p1-link" for="pg-index"><span class="p1-app-logo-frame"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="StudyBuddy Logo" class="p1-app-logo"></span><span>StudyBuddy</span></label>
+<section class="p1-card" aria-labelledby="login-page-title">
+<h1 id="login-page-title">Welcome back</h1>
+<p class="p1-intro">Log in to find your next great study session.</p>
+<form id="login-form" action="" method="post">
+<div class="p1-field"><label for="login-email" class="p1-lbl">College Email</label><input id="login-email" name="email" type="email" autocomplete="username" required></div>
+<div class="p1-field"><label for="login-password" class="p1-lbl">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" required></div>
+<p class="p1-need">Fill in your email and password to continue.</p>
+<button class="p1-submit p1-go" type="submit">Log In</button>
+</form>
+<p class="p1-footer">Don't have an account? <label for="pg-signup" class="p1-link">Sign up here</label></p>
+</section>
+</div>
+</section>
+
+  <!-- ===================== PAGE: SIGN UP ===================== -->
+  <section class="page p1-page" id="page-signup" aria-label="Sign up">
+<div class="p1-wrap p1-main">
+<label class="p1-brand p1-link" for="pg-index"><span class="p1-app-logo-frame"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="StudyBuddy Logo" class="p1-app-logo"></span><span>StudyBuddy</span></label>
+<section class="p1-card" aria-labelledby="signup-page-title">
+<h1 id="signup-page-title">Create your account</h1>
+<p class="p1-intro">A few details first, then you can build your study profile.</p>
+<form id="signup-form" action="" method="post">
+<div class="p1-fields">
+<div class="p1-field p1-full"><label for="signup-full-name" class="p1-lbl">Full Name</label><input id="signup-full-name" name="fullName" type="text" autocomplete="name" required></div>
+<div class="p1-field p1-full"><label for="signup-email" class="p1-lbl">College Email</label><input id="signup-email" name="email" type="email" autocomplete="email" required></div>
+<div class="p1-field"><label for="signup-password" class="p1-lbl">Password</label><input id="signup-password" name="password" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters"></div>
+<div class="p1-field"><label for="signup-confirm-password" class="p1-lbl">Confirm Password</label><input id="signup-confirm-password" name="confirmPassword" type="password" autocomplete="new-password" required placeholder="Re-enter password"></div>
+<div class="p1-field"><label for="signup-branch" class="p1-lbl">Branch</label><select id="signup-branch" name="branch" required><option value="" disabled selected>Select branch</option><option value="CSE">CSE</option><option value="ECE">ECE</option><option value="EEE">EEE</option><option value="ME">ME</option><option value="CE">CE</option></select></div>
+<div class="p1-field"><label for="signup-year" class="p1-lbl">Year</label><select id="signup-year" name="year" required><option value="" disabled selected>Select year</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option><option value="4">4th Year</option></select></div>
+</div>
+<p class="p1-need">Complete every field to continue.</p>
+<button class="p1-submit p1-go" type="submit">Next: Setup Profile</button>
+</form>
+<p class="p1-footer">Already have an account? <label for="pg-login" class="p1-link">Log in</label></p>
+</section>
+</div>
+</section>
+
+  <!-- ===================== PAGE: EDIT PROFILE ===================== -->
+  <section class="page p1-page" id="page-editprofile" aria-label="Edit profile">
+<header>
+<div class="p1-shell p1-topline"><label class="p1-brand p1-link" for="pg-index"><span class="p1-app-logo-frame"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="StudyBuddy Logo" class="p1-app-logo"></span><span>StudyBuddy</span></label><label class="p1-back p1-link" for="pg-signup">Back to sign up</label></div>
+</header>
+<div class="p1-shell p1-main">
+<h1>Complete Your Study Profile</h1>
+<p class="p1-lead">Share what you are learning and when you like to study.</p>
+<form id="editprofile-form" action="" method="post">
+<section class="p1-panel" aria-labelledby="editprofile-photo-heading">
+<h2 id="editprofile-photo-heading">Profile Photo</h2>
+<div class="p1-photo-row">
+<div class="p1-avatar" id="editprofile-avatar-preview" aria-label="Profile photo preview"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="StudyBuddy Logo" class="p1-logo-preview"></div>
+<div class="p1-upload"><label for="editprofile-photo" class="p1-lbl">Choose an image</label><input id="editprofile-photo" name="photo" type="file" accept="image/*"><p class="p1-hint">Image files only. A clear photo helps classmates recognize you.</p></div>
+</div>
+</section>
+<section class="p1-panel" aria-labelledby="editprofile-bio-heading">
+<h2 id="editprofile-bio-heading">About You</h2>
+<label class="p1-field-label p1-lbl" for="editprofile-bio">Bio</label>
+<textarea id="editprofile-bio" name="bio" maxlength="150" placeholder="Tell potential study partners a little about yourself (up to 150 characters)."></textarea>
+<p class="p1-hint">Maximum 150 characters.</p>
+</section>
+<section class="p1-panel" aria-labelledby="editprofile-subjects-heading">
+<h2 id="editprofile-subjects-heading">Subjects</h2>
+<div class="p1-subject-groups">
+<fieldset><legend>Can Help With</legend><div class="p1-tags">
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="C Programming"><span>C Programming</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Python"><span>Python</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Data Structures"><span>Data Structures</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="DBMS"><span>DBMS</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Discrete Mathematics"><span>Discrete Mathematics</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Calculus"><span>Calculus</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Physics"><span>Physics</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Electronics"><span>Electronics</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Internet Programming"><span>Internet Programming</span></label>
+<label class="p1-tag"><input type="checkbox" name="canHelp" value="Communication Skills"><span>Communication Skills</span></label>
+</div></fieldset>
+<fieldset><legend>Wants Help With</legend><div class="p1-tags">
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="C Programming"><span>C Programming</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Python"><span>Python</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Data Structures"><span>Data Structures</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="DBMS"><span>DBMS</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Discrete Mathematics"><span>Discrete Mathematics</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Calculus"><span>Calculus</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Physics"><span>Physics</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Electronics"><span>Electronics</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Internet Programming"><span>Internet Programming</span></label>
+<label class="p1-tag"><input type="checkbox" name="wantsHelp" value="Communication Skills"><span>Communication Skills</span></label>
+</div></fieldset>
+</div>
+</section>
+<section class="p1-panel" aria-labelledby="editprofile-preferences-heading">
+<h2 id="editprofile-preferences-heading">Study Preferences</h2>
+<div class="p1-preference-grid">
+<fieldset><legend>Study Mode</legend><div class="p1-pills">
+<label class="p1-choice"><input type="radio" name="studyMode" value="Online" required><span>Online</span></label>
+<label class="p1-choice"><input type="radio" name="studyMode" value="Offline"><span>Offline</span></label>
+<label class="p1-choice"><input type="radio" name="studyMode" value="Either"><span>Either</span></label>
+</div></fieldset>
+<fieldset><legend>Study Style</legend><div class="p1-pills">
+<label class="p1-choice"><input type="radio" name="studyStyle" value="Quiet" required><span>Quiet</span></label>
+<label class="p1-choice"><input type="radio" name="studyStyle" value="Discussion"><span>Discussion</span></label>
+</div></fieldset>
+</div>
+</section>
+<section class="p1-panel" aria-labelledby="editprofile-availability-heading">
+<h2 id="editprofile-availability-heading">Weekly Availability</h2>
+<div class="p1-availability-scroll" tabindex="0" aria-label="Scrollable weekly availability grid">
+<table class="p1-availability">
+<thead><tr><th scope="col">Time</th><th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th><th scope="col">Sat</th><th scope="col">Sun</th></tr></thead>
+<tbody>
+<tr><th scope="row">Morning<br>(8 AM - 12 PM)</th><td><input aria-label="Monday, Morning (8 AM - 12 PM)" type="checkbox" name="availability[]" value="Mon-morning"></td><td><input aria-label="Tuesday, Morning (8 AM - 12 PM)" type="checkbox" name="availability[]" value="Tue-morning"></td><td><input aria-label="Wednesday, Morning (8 AM - 12 PM)" type="checkbox" name="availability[]" value="Wed-morning"></td><td><input aria-label="Thursday, Morning (8 AM - 12 PM)" type="checkbox" name="availability[]" value="Thu-morning"></td><td><input aria-label="Friday, Morning (8 AM - 12 PM)" type="checkbox" name="availability[]" value="Fri-morning"></td><td><input aria-label="Saturday, Morning (8 AM - 12 PM)" type="checkbox" name="availability[]" value="Sat-morning"></td><td><input aria-label="Sunday, Morning (8 AM - 12 PM)" type="checkbox" name="availability[]" value="Sun-morning"></td></tr>
+<tr><th scope="row">Afternoon<br>(12 PM - 5 PM)</th><td><input aria-label="Monday, Afternoon (12 PM - 5 PM)" type="checkbox" name="availability[]" value="Mon-afternoon"></td><td><input aria-label="Tuesday, Afternoon (12 PM - 5 PM)" type="checkbox" name="availability[]" value="Tue-afternoon"></td><td><input aria-label="Wednesday, Afternoon (12 PM - 5 PM)" type="checkbox" name="availability[]" value="Wed-afternoon"></td><td><input aria-label="Thursday, Afternoon (12 PM - 5 PM)" type="checkbox" name="availability[]" value="Thu-afternoon"></td><td><input aria-label="Friday, Afternoon (12 PM - 5 PM)" type="checkbox" name="availability[]" value="Fri-afternoon"></td><td><input aria-label="Saturday, Afternoon (12 PM - 5 PM)" type="checkbox" name="availability[]" value="Sat-afternoon"></td><td><input aria-label="Sunday, Afternoon (12 PM - 5 PM)" type="checkbox" name="availability[]" value="Sun-afternoon"></td></tr>
+<tr><th scope="row">Evening<br>(5 PM - 10 PM)</th><td><input aria-label="Monday, Evening (5 PM - 10 PM)" type="checkbox" name="availability[]" value="Mon-evening"></td><td><input aria-label="Tuesday, Evening (5 PM - 10 PM)" type="checkbox" name="availability[]" value="Tue-evening"></td><td><input aria-label="Wednesday, Evening (5 PM - 10 PM)" type="checkbox" name="availability[]" value="Wed-evening"></td><td><input aria-label="Thursday, Evening (5 PM - 10 PM)" type="checkbox" name="availability[]" value="Thu-evening"></td><td><input aria-label="Friday, Evening (5 PM - 10 PM)" type="checkbox" name="availability[]" value="Fri-evening"></td><td><input aria-label="Saturday, Evening (5 PM - 10 PM)" type="checkbox" name="availability[]" value="Sat-evening"></td><td><input aria-label="Sunday, Evening (5 PM - 10 PM)" type="checkbox" name="availability[]" value="Sun-evening"></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<div class="p1-save-row"><p class="p1-need">Choose a study mode and a study style to continue.</p>
+<button class="p1-submit p1-go" type="submit">Complete Profile</button></div>
+</form>
+</div>
+</section>
+
+  <!-- ===================== PAGE: DASHBOARD ===================== -->
+  <section class="main page" id="page-dashboard" aria-label="Dashboard">
+    <div class="blob blob-3"></div>
+
+    <!-- Welcome heading + subtitle -->
+    <section class="welcome">
+      <h1>Welcome, <span data-user-name>Student</span></h1>
+      <p class="subtitle">
+        <span class="highlight">3 students</span> match your subjects this week. Let's find your study partner!
+      </p>
+    </section>
+
+    <!-- Suggested matches -->
+    <section class="matches-box">
+
+      <div class="matches-header">
+        <h2>Suggested matches</h2>
+        <label for="pg-find" class="see-all">See all →</label>
+      </div>
+
+      <!-- Grid of 3 cards, sorted from highest match to lowest -->
+      <div class="cards-grid">
+
+        <!-- CARD 1 (first-child, so it gets the "Top match" label) -->
+        <div class="student-card">
+          <div class="card-top">
+            <div class="card-person">
+              <div class="avatar">RS</div>
+              <div>
+                <p class="name">Riya Sharma</p>
+                <p class="branch">B.Tech CSE · 1st year</p>
+              </div>
+            </div>
+            <span class="match">92% match</span>
+          </div>
+
+          <p class="label">Can help with</p>
+          <span class="tag tag-help">C Programming</span>
+          <span class="tag tag-help">Data Structures</span>
+
+          <p class="label">Wants help with</p>
+          <span class="tag tag-want">DBMS</span>
+
+          <p class="label">Free days</p>
+          <div class="days">
+            <span class="day day-free">M</span>
+            <span class="day">T</span>
+            <span class="day day-free">W</span>
+            <span class="day">T</span>
+            <span class="day day-free">F</span>
+            <span class="day day-free">S</span>
+            <span class="day">S</span>
+          </div>
+
+          <div class="card-buttons">
+            <button type="button" class="btn-request">Send request</button>
+            <label for="pg-profile" class="btn-view" title="View profile" aria-label="View profile">→</label>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="student-card">
+          <div class="card-top">
+            <div class="card-person">
+              <div class="avatar">AK</div>
+              <div>
+                <p class="name">Aarav Kumar</p>
+                <p class="branch">B.Tech CSE · 1st year</p>
+              </div>
+            </div>
+            <span class="match">86% match</span>
+          </div>
+
+          <p class="label">Can help with</p>
+          <span class="tag tag-help">DBMS</span>
+          <span class="tag tag-help">Python</span>
+
+          <p class="label">Wants help with</p>
+          <span class="tag tag-want">Physics</span>
+          <span class="tag tag-want">Calculus</span>
+
+          <p class="label">Free days</p>
+          <div class="days">
+            <span class="day">M</span>
+            <span class="day day-free">T</span>
+            <span class="day">W</span>
+            <span class="day day-free">T</span>
+            <span class="day">F</span>
+            <span class="day day-free">S</span>
+            <span class="day">S</span>
+          </div>
+
+          <div class="card-buttons">
+            <button type="button" class="btn-request">Send request</button>
+            <label for="pg-profile" class="btn-view" title="View profile" aria-label="View profile">→</label>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="student-card">
+          <div class="card-top">
+            <div class="card-person">
+              <div class="avatar">KS</div>
+              <div>
+                <p class="name">Kabir Singh</p>
+                <p class="branch">B.Tech ECE · 2nd year</p>
+              </div>
+            </div>
+            <span class="match">78% match</span>
+          </div>
+
+          <p class="label">Can help with</p>
+          <span class="tag tag-help">Digital Electronics</span>
+          <span class="tag tag-help">Physics</span>
+
+          <p class="label">Wants help with</p>
+          <span class="tag tag-want">Python</span>
+
+          <p class="label">Free days</p>
+          <div class="days">
+            <span class="day">M</span>
+            <span class="day">T</span>
+            <span class="day day-free">W</span>
+            <span class="day">T</span>
+            <span class="day">F</span>
+            <span class="day day-free">S</span>
+            <span class="day day-free">S</span>
+          </div>
+
+          <div class="card-buttons">
+            <button type="button" class="btn-request">Send request</button>
+            <label for="pg-profile" class="btn-view" title="View profile" aria-label="View profile">→</label>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </section>
+
+  <!-- ===================== PAGE: FIND PEERS ===================== -->
+  <section class="main page" id="page-find" aria-label="Find Peers">
+
+    <!-- ===== Title ===== -->
+    <h1 class="page-title">Find a study partner</h1>
+    <p class="page-subtitle">Filter by subject, free days and study style.</p>
+
+    <!-- ===== Search bar ===== -->
+    <form class="search-bar">
+      <input type="text" name="q" aria-label="Search by name or subject" placeholder="Search by name or subject, like DBMS">
+      <button type="submit" class="btn-dark">Search</button>
+    </form>
+
+
+    <!-- ===== Filters (left) + Results (right) ===== -->
+    <div class="find-layout">
+
+      <!-- ---------- FILTER SIDEBAR ---------- -->
+      <form class="filters panel">
+        <h2>Filters</h2>
+
+        <!-- Subject dropdown: same subject list as the profile form -->
+        <div class="filter-group">
+          <p class="filter-title">Subject</p>
+          <select name="subject">
+            <option>Any subject</option>
+            <option>C Programming</option>
+            <option>Python</option>
+            <option>Data Structures</option>
+            <option>DBMS</option>
+            <option>Discrete Mathematics</option>
+            <option>Calculus</option>
+            <option>Physics</option>
+            <option>Digital Electronics</option>
+            <option>Internet Programming</option>
+            <option>Communication Skills</option>
+          </select>
+        </div>
+
+        <!-- Radio buttons: same "name" = you can pick only ONE -->
+        <div class="filter-group">
+          <p class="filter-title">Looking for</p>
+          <label class="option"><input type="radio" name="looking" value="help-me" checked> Someone who can help me</label>
+          <label class="option"><input type="radio" name="looking" value="i-help"> Someone I can help</label>
+        </div>
+
+        <!-- Checkboxes: you can pick MANY -->
+        <div class="filter-group">
+          <p class="filter-title">Free on</p>
+          <div class="day-options">
+            <label class="option"><input type="checkbox" name="day" value="mon"> Mon</label>
+            <label class="option"><input type="checkbox" name="day" value="tue"> Tue</label>
+            <label class="option"><input type="checkbox" name="day" value="wed"> Wed</label>
+            <label class="option"><input type="checkbox" name="day" value="thu"> Thu</label>
+            <label class="option"><input type="checkbox" name="day" value="fri"> Fri</label>
+            <label class="option"><input type="checkbox" name="day" value="sat"> Sat</label>
+            <label class="option"><input type="checkbox" name="day" value="sun"> Sun</label>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <p class="filter-title">Time of day</p>
+          <label class="option"><input type="checkbox" name="time" value="morning"> Morning (8 am–12 pm)</label>
+          <label class="option"><input type="checkbox" name="time" value="afternoon"> Afternoon (12–5 pm)</label>
+          <label class="option"><input type="checkbox" name="time" value="evening"> Evening (5–10 pm)</label>
+        </div>
+
+        <div class="filter-group">
+          <p class="filter-title">Study mode</p>
+          <label class="option"><input type="radio" name="mode" value="online"> Online</label>
+          <label class="option"><input type="radio" name="mode" value="offline"> Offline</label>
+          <label class="option"><input type="radio" name="mode" value="either" checked> Either</label>
+        </div>
+
+        <!-- type="reset" clears all the choices in this form, no JavaScript needed -->
+        <div class="filter-buttons">
+          <button type="submit" class="btn-dark">Apply</button>
+          <button type="reset" class="btn-light">Clear</button>
+        </div>
+      </form>
+
+
+      <!-- ---------- RESULTS ---------- -->
+      <section>
+
+        <div class="results-top">
+          <span class="results-count">6 students found</span>
+          <select name="sort" aria-label="Sort results">
+            <option>Best match</option>
+            <option>Newest</option>
+          </select>
+        </div>
+
+        <div class="results-grid">
+
+          <!-- Card 1 -->
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">RS</div>
+                <div><p class="name">Riya Sharma</p><p class="branch">B.Tech CSE · 1st year</p></div>
+              </div>
+              <span class="match">92% match</span>
+            </div>
+            <p class="label">Can help with</p>
+            <span class="tag tag-help">C Programming</span>
+            <span class="tag tag-help">Data Structures</span>
+            <p class="label">Wants help with</p>
+            <span class="tag tag-want">DBMS</span>
+            <p class="label">Free days</p>
+            <div class="days">
+              <span class="day day-free">M</span><span class="day">T</span><span class="day day-free">W</span><span class="day">T</span><span class="day day-free">F</span><span class="day day-free">S</span><span class="day">S</span>
+            </div>
+            <div class="card-buttons">
+              <button class="btn-dark">Send request</button>
+              <label for="pg-profile" class="btn-view">→</label>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">AK</div>
+                <div><p class="name">Aarav Kumar</p><p class="branch">B.Tech CSE · 1st year</p></div>
+              </div>
+              <span class="match">86% match</span>
+            </div>
+            <p class="label">Can help with</p>
+            <span class="tag tag-help">DBMS</span>
+            <span class="tag tag-help">Python</span>
+            <p class="label">Wants help with</p>
+            <span class="tag tag-want">Physics</span>
+            <span class="tag tag-want">Calculus</span>
+            <p class="label">Free days</p>
+            <div class="days">
+              <span class="day">M</span><span class="day day-free">T</span><span class="day">W</span><span class="day day-free">T</span><span class="day">F</span><span class="day day-free">S</span><span class="day">S</span>
+            </div>
+            <div class="card-buttons">
+              <button class="btn-dark">Send request</button>
+              <label for="pg-profile" class="btn-view">→</label>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">AN</div>
+                <div><p class="name">Ananya Nair</p><p class="branch">B.Tech CSE · 2nd year</p></div>
+              </div>
+              <span class="match">81% match</span>
+            </div>
+            <p class="label">Can help with</p>
+            <span class="tag tag-help">Discrete Mathematics</span>
+            <p class="label">Wants help with</p>
+            <span class="tag tag-want">Internet Programming</span>
+            <p class="label">Free days</p>
+            <div class="days">
+              <span class="day">M</span><span class="day day-free">T</span><span class="day day-free">W</span><span class="day">T</span><span class="day">F</span><span class="day">S</span><span class="day day-free">S</span>
+            </div>
+            <div class="card-buttons">
+              <button class="btn-dark">Send request</button>
+              <label for="pg-profile" class="btn-view">→</label>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">KS</div>
+                <div><p class="name">Kabir Singh</p><p class="branch">B.Tech ECE · 2nd year</p></div>
+              </div>
+              <span class="match">78% match</span>
+            </div>
+            <p class="label">Can help with</p>
+            <span class="tag tag-help">Digital Electronics</span>
+            <span class="tag tag-help">Physics</span>
+            <p class="label">Wants help with</p>
+            <span class="tag tag-want">Python</span>
+            <p class="label">Free days</p>
+            <div class="days">
+              <span class="day">M</span><span class="day">T</span><span class="day day-free">W</span><span class="day">T</span><span class="day">F</span><span class="day day-free">S</span><span class="day day-free">S</span>
+            </div>
+            <div class="card-buttons">
+              <button class="btn-dark">Send request</button>
+              <label for="pg-profile" class="btn-view">→</label>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">SM</div>
+                <div><p class="name">Sneha Mehta</p><p class="branch">B.Tech CSE · 1st year</p></div>
+              </div>
+              <span class="match">74% match</span>
+            </div>
+            <p class="label">Can help with</p>
+            <span class="tag tag-help">Calculus</span>
+            <span class="tag tag-help">Communication Skills</span>
+            <p class="label">Wants help with</p>
+            <span class="tag tag-want">C Programming</span>
+            <p class="label">Free days</p>
+            <div class="days">
+              <span class="day day-free">M</span><span class="day">T</span><span class="day">W</span><span class="day day-free">T</span><span class="day">F</span><span class="day">S</span><span class="day day-free">S</span>
+            </div>
+            <div class="card-buttons">
+              <button class="btn-dark">Send request</button>
+              <label for="pg-profile" class="btn-view">→</label>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">VR</div>
+                <div><p class="name">Vikram Rao</p><p class="branch">B.Tech EEE · 1st year</p></div>
+              </div>
+              <span class="match">69% match</span>
+            </div>
+            <p class="label">Can help with</p>
+            <span class="tag tag-help">Physics</span>
+            <p class="label">Wants help with</p>
+            <span class="tag tag-want">Data Structures</span>
+            <span class="tag tag-want">DBMS</span>
+            <p class="label">Free days</p>
+            <div class="days">
+              <span class="day">M</span><span class="day">T</span><span class="day">W</span><span class="day">T</span><span class="day day-free">F</span><span class="day day-free">S</span><span class="day">S</span>
+            </div>
+            <div class="card-buttons">
+              <button class="btn-dark">Send request</button>
+              <label for="pg-profile" class="btn-view">→</label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Shown at the bottom as a friendly "that's everyone" message.
+             When the site works, this would show only when no one matches. -->
+        <div class="empty-state">
+          <h3>That's everyone for now</h3>
+          <p>Try removing a filter to see more students.</p>
+        </div>
+
+      </section>
+    </div>
+  </section>
+
+  <!-- ===================== PAGE: STUDENT PROFILE ===================== -->
+  <section class="main page" id="page-profile" aria-label="Student profile">
+
+    <label for="pg-find" class="back-link">← Back to results</label>
+
+    <!-- ===== 1. HEADER ===== -->
+    <section class="panel profile-header">
+
+      <div class="big-avatar">RS</div>
+
+      <div>
+        <h1 class="profile-name">Riya Sharma</h1>
+        <p class="profile-branch">B.Tech CSE · 1st year</p>
+        <p class="profile-bio">
+          Love solving C and DSA problems. Looking for someone to revise DBMS with before mid-terms.
+        </p>
+
+        <div class="profile-actions">
+          <button class="btn-dark">Send request</button>
+          <!-- Messaging only works after you are partners -->
+          <button class="btn-light">Message</button>
+
+          <!-- ⋯ menu: click to open, click again to close -->
+          <details class="more-menu">
+            <summary aria-label="More options">⋯</summary>
+            <div class="menu-box">
+              <label for="pg-report">⚑ Report user</label>
+              <label for="pg-settings">⊘ Block user</label>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="match-circle">
+        <span class="match-number">92%</span>
+        <span class="match-word">match</span>
+      </div>
+    </section>
+
+
+    <!-- ===== 2. ABOUT: subjects and preferences ===== -->
+    <div class="details-grid">
+
+      <section class="panel">
+        <h2 class="section-title">Subjects</h2>
+        <p class="label">Can help with</p>
+        <span class="tag tag-help">C Programming</span>
+        <span class="tag tag-help">Data Structures</span>
+        <p class="label">Wants help with</p>
+        <span class="tag tag-want">DBMS</span>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">Study preferences</h2>
+        <div class="pref-row">
+          <span class="pref-label">Study mode</span>
+          <span class="pref-value">Online</span>
+        </div>
+        <div class="pref-row">
+          <span class="pref-label">Study style</span>
+          <span class="pref-value">Discussion</span>
+        </div>
+        <div class="pref-row">
+          <span class="pref-label">Best time</span>
+          <span class="pref-value">Evenings</span>
+        </div>
+      </section>
+    </div>
+
+
+    <!-- ===== 3. TIMETABLE ===== -->
+    <section class="panel timetable-panel">
+      <h2 class="section-title">When Riya is free</h2>
+
+      <!-- <table> = rows <tr>, header cells <th>, normal cells <td> -->
+      <table class="timetable">
+        <tr>
+          <th><span class="sr-only">Time of day</span></th>
+          <th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th><th scope="col">Sat</th><th scope="col">Sun</th>
+        </tr>
+        <tr>
+          <th scope="row">Morning</th>
+          <td></td><td></td><td class="free"></td><td></td><td></td><td class="both">Both</td><td></td>
+        </tr>
+        <tr>
+          <th scope="row">Afternoon</th>
+          <td class="free"></td><td></td><td></td><td></td><td class="free"></td><td class="free"></td><td></td>
+        </tr>
+        <tr>
+          <th scope="row">Evening</th>
+          <td class="both">Both</td><td></td><td class="both">Both</td><td></td><td class="free"></td><td></td><td></td>
+        </tr>
+      </table>
+
+      <!-- Colour key -->
+      <div class="legend">
+        <span><span class="key" style="background-color: #9C87D6;"></span> You're both free</span>
+        <span><span class="key" style="background-color: #E6DFF3;"></span> Only Riya is free</span>
+        <span><span class="key" style="background-color: #FFFFFF;"></span> Busy</span>
+      </div>
+    </section>
+
+  </section>
+
+  <!-- ===================== PAGE: MY PROFILE ===================== -->
+  <section class="main page" id="page-myprofile" aria-label="My profile">
+
+    <!-- ===== 1. HEADER: your own info, no match % and no request buttons ===== -->
+    <section class="panel profile-header">
+
+      <div class="big-avatar" data-user-initials>ST</div>
+
+      <div>
+        <h1 class="profile-name" data-user-name>Student</h1>
+        <p class="profile-branch" data-user-branch>B.Tech Student</p>
+        <p class="profile-bio">
+          Good at DBMS and Python. Want a partner to practise C and Data Structures with in the evenings.
+        </p>
+
+        <div class="profile-actions">
+          <!-- Goes to Part 1's profile form, where you change your details -->
+          <label for="pg-editprofile" class="btn-dark">✎ Edit profile</label>
+          <!-- Privacy controls live on Part 3's settings page -->
+          <label for="pg-settings" class="btn-light">Privacy settings</label>
+        </div>
+      </div>
+
+      <!-- Small note in the corner instead of a match % -->
+      <span class="own-note">This is how others see you</span>
+    </section>
+
+
+    <!-- ===== 2. ABOUT: subjects and preferences ===== -->
+    <div class="details-grid">
+
+      <section class="panel">
+        <h2 class="section-title">My subjects</h2>
+        <p class="label">I can help with</p>
+        <span class="tag tag-help">DBMS</span>
+        <span class="tag tag-help">Python</span>
+        <p class="label">I want help with</p>
+        <span class="tag tag-want">C Programming</span>
+        <span class="tag tag-want">Data Structures</span>
+      </section>
+
+      <section class="panel">
+        <h2 class="section-title">My study preferences</h2>
+        <div class="pref-row">
+          <span class="pref-label">Study mode</span>
+          <span class="pref-value">Online</span>
+        </div>
+        <div class="pref-row">
+          <span class="pref-label">Study style</span>
+          <span class="pref-value">Discussion</span>
+        </div>
+        <div class="pref-row">
+          <span class="pref-label">Best time</span>
+          <span class="pref-value">Evenings</span>
+        </div>
+      </section>
+    </div>
+
+
+    <!-- ===== 3. TIMETABLE: only YOUR free slots ===== -->
+    <section class="panel timetable-panel">
+      <h2 class="section-title">When I'm free</h2>
+
+      <table class="timetable">
+        <tr>
+          <th><span class="sr-only">Time of day</span></th>
+          <th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th><th scope="col">Sat</th><th scope="col">Sun</th>
+        </tr>
+        <tr>
+          <th scope="row">Morning</th>
+          <td></td><td></td><td></td><td></td><td></td><td class="mine">Free</td><td class="mine">Free</td>
+        </tr>
+        <tr>
+          <th scope="row">Afternoon</th>
+          <td></td><td></td><td></td><td></td><td></td><td></td><td class="mine">Free</td>
+        </tr>
+        <tr>
+          <th scope="row">Evening</th>
+          <td class="mine">Free</td><td class="mine">Free</td><td class="mine">Free</td><td></td><td></td><td></td><td></td>
+        </tr>
+      </table>
+
+      <div class="legend">
+        <span><span class="key" style="background-color: #9C87D6;"></span> Free</span>
+        <span><span class="key" style="background-color: #FFFFFF;"></span> Busy</span>
+      </div>
+    </section>
+
+  </section>
+
+  <!-- ===================== PAGE: REQUESTS ===================== -->
+  <section class="main page" id="page-requests" aria-label="Requests">
+
+    <h1 class="page-title">Requests</h1>
+    <p class="page-subtitle">Accept students who want to study with you, and track the requests you sent.</p>
+
+    <section class="panel">
+
+      <input class="tab-radio" type="radio" name="tab" id="tab-in" checked aria-label="Show incoming requests">
+      <input class="tab-radio" type="radio" name="tab" id="tab-sent" aria-label="Show sent requests">
+
+      <div class="tab-labels">
+        <label for="tab-in">Incoming (3)</label>
+        <label for="tab-sent">Sent (4)</label>
+      </div>
+
+      <!-- ---------- Incoming ---------- -->
+      <section class="tab-panel panel-in" aria-label="Incoming requests">
+        <div class="request-grid">
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">AK</div>
+                <div><p class="name">Aarav Kumar</p><p class="branch">B.Tech CSE · 1st year</p></div>
+              </div>
+              <span class="match">86% match</span>
+            </div>
+            <p class="label">Can help with</p>
+          <span class="tag tag-help">DBMS</span>
+          <span class="tag tag-help">Python</span>
+            <p class="label">Wants help with</p>
+          <span class="tag tag-want">Physics</span>
+          <span class="tag tag-want">Calculus</span>
+            <p class="label">Free days</p>
+            <div class="days"><span class="day">M</span><span class="day day-free">T</span><span class="day">W</span><span class="day day-free">T</span><span class="day">F</span><span class="day day-free">S</span><span class="day">S</span></div>
+            <div class="request-actions">
+              <form action="" method="post">
+                <input type="hidden" name="student" value="aarav-kumar">
+                <button type="submit" name="action" value="accept" class="btn-dark">Accept</button>
+                <button type="submit" name="action" value="reject" class="btn-danger">Reject</button>
+              </form>
+              <label for="pg-profile" class="btn-view" title="View profile" aria-label="View Aarav Kumar's profile">→</label>
+            </div>
+          </div>
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">AN</div>
+                <div><p class="name">Ananya Nair</p><p class="branch">B.Tech CSE · 2nd year</p></div>
+              </div>
+              <span class="match">81% match</span>
+            </div>
+            <p class="label">Can help with</p>
+          <span class="tag tag-help">Discrete Mathematics</span>
+            <p class="label">Wants help with</p>
+          <span class="tag tag-want">Internet Programming</span>
+            <p class="label">Free days</p>
+            <div class="days"><span class="day">M</span><span class="day day-free">T</span><span class="day day-free">W</span><span class="day">T</span><span class="day">F</span><span class="day">S</span><span class="day day-free">S</span></div>
+            <div class="request-actions">
+              <form action="" method="post">
+                <input type="hidden" name="student" value="ananya-nair">
+                <button type="submit" name="action" value="accept" class="btn-dark">Accept</button>
+                <button type="submit" name="action" value="reject" class="btn-danger">Reject</button>
+              </form>
+              <label for="pg-profile" class="btn-view" title="View profile" aria-label="View Ananya Nair's profile">→</label>
+            </div>
+          </div>
+          <div class="student-card">
+            <div class="card-top">
+              <div class="card-person">
+                <div class="avatar">KS</div>
+                <div><p class="name">Kabir Singh</p><p class="branch">B.Tech ECE · 2nd year</p></div>
+              </div>
+              <span class="match">78% match</span>
+            </div>
+            <p class="label">Can help with</p>
+          <span class="tag tag-help">Digital Electronics</span>
+          <span class="tag tag-help">Physics</span>
+            <p class="label">Wants help with</p>
+          <span class="tag tag-want">Python</span>
+            <p class="label">Free days</p>
+            <div class="days"><span class="day">M</span><span class="day">T</span><span class="day day-free">W</span><span class="day">T</span><span class="day">F</span><span class="day day-free">S</span><span class="day day-free">S</span></div>
+            <div class="request-actions">
+              <form action="" method="post">
+                <input type="hidden" name="student" value="kabir-singh">
+                <button type="submit" name="action" value="accept" class="btn-dark">Accept</button>
+                <button type="submit" name="action" value="reject" class="btn-danger">Reject</button>
+              </form>
+              <label for="pg-profile" class="btn-view" title="View profile" aria-label="View Kabir Singh's profile">→</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Sent ---------- -->
+      <section class="tab-panel panel-sent" aria-label="Sent requests">
+        <div class="table-wrap">
+          <table class="sent">
+            <caption class="sr-only">Requests you have sent</caption>
+            <thead>
+              <tr>
+                <th scope="col">Student</th><th scope="col">Branch and year</th><th scope="col">Subject</th>
+                <th scope="col">Sent on</th><th scope="col">Status</th><th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <th scope="row">Riya Sharma</th><td>CSE · 1st year</td><td>DBMS</td>
+              <td><time datetime="2026-10-22">22 Oct 2026</time></td>
+              <td><span class="status pending">Pending</span></td><td><form action="" method="post"><button type="submit" name="cancel" value="riya-sharma" class="btn-danger btn-small">Cancel</button></form></td>
+            </tr>
+            <tr>
+              <th scope="row">Sneha Mehta</th><td>CSE · 1st year</td><td>Calculus</td>
+              <td><time datetime="2026-10-20">20 Oct 2026</time></td>
+              <td><span class="status accepted">Accepted</span></td><td>—</td>
+            </tr>
+            <tr>
+              <th scope="row">Vikram Rao</th><td>EEE · 1st year</td><td>Physics</td>
+              <td><time datetime="2026-10-18">18 Oct 2026</time></td>
+              <td><span class="status rejected">Rejected</span></td><td>—</td>
+            </tr>
+            <tr>
+              <th scope="row">Ananya Nair</th><td>CSE · 2nd year</td><td>Discrete Mathematics</td>
+              <td><time datetime="2026-10-15">15 Oct 2026</time></td>
+              <td><span class="status pending">Pending</span></td><td><form action="" method="post"><button type="submit" name="cancel" value="ananya-nair" class="btn-danger btn-small">Cancel</button></form></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </section>
+  </section>
+
+  <!-- ===================== PAGE: MESSAGES ===================== -->
+  <section class="main page" id="page-messages" aria-label="Messages">
+
+    <h1 class="page-title">Messages</h1>
+    <p class="page-subtitle">Chat with the students you are studying with.</p>
+
+    <section class="panel chat-layout">
+
+      <!-- ---------- Chat list ---------- -->
+      <aside class="chat-list" aria-label="Conversations">
+        <h2>Chats</h2>
+        <ul>
+          <li>
+            <a href="#chat-riya">
+              <span class="avatar">RS</span>
+              <span class="info"><strong>Riya Sharma</strong><small>Online is better for me. I'll share a link.</small></span><span class="unread">2</span>
+            </a>
+          </li>
+          <li>
+            <a href="#chat-aarav">
+              <span class="avatar">AK</span>
+              <span class="info"><strong>Aarav Kumar</strong><small>Yes please, I find recursion confusing.</small></span>
+            </a>
+          </li>
+          <li>
+            <a href="#chat-kabir">
+              <span class="avatar">KS</span>
+              <span class="info"><strong>Kabir Singh</strong><small>Sunday works. Let's do it offline.</small></span>
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- ---------- Chat windows ---------- -->
+      <div class="chat-area">
+      <section class="chat-window" id="chat-aarav" aria-label="Chat with Aarav Kumar">
+        <header class="chat-header">
+          <span class="avatar">AK</span>
+          <div><h2>Aarav Kumar</h2><p>Last seen 2 hours ago</p></div>
+          <div class="chat-links">
+            <label for="pg-profile" class="btn-light btn-small">Profile</label>
+            <label for="pg-report" class="btn-danger btn-small">Report</label>
+          </div>
+        </header>
+        <div class="messages">
+          <p class="bubble sent">Hey Aarav, thanks for accepting my request!<time datetime="2026-10-24T16:40">4:40 PM</time></p>
+          <p class="bubble">No problem. Want to go through Python functions together?<time datetime="2026-10-24T16:52">4:52 PM</time></p>
+          <p class="bubble sent">Yes please, I find recursion confusing.<time datetime="2026-10-24T16:55">4:55 PM</time></p>
+        </div>
+        <form class="chat-form" action="" method="post">
+          <label class="sr-only" for="msg-chat-aarav">Type a message</label>
+          <input type="text" id="msg-chat-aarav" name="message" placeholder="Type a message..." maxlength="500" required>
+          <button type="submit" class="btn-dark">Send</button>
+        </form>
+      </section>
+      <section class="chat-window" id="chat-kabir" aria-label="Chat with Kabir Singh">
+        <header class="chat-header">
+          <span class="avatar">KS</span>
+          <div><h2>Kabir Singh</h2><p>Last seen yesterday</p></div>
+          <div class="chat-links">
+            <label for="pg-profile" class="btn-light btn-small">Profile</label>
+            <label for="pg-report" class="btn-danger btn-small">Report</label>
+          </div>
+        </header>
+        <div class="messages">
+          <p class="bubble">Hi, are you free for a Physics session on Sunday?<time datetime="2026-10-24T11:20">11:20 AM</time></p>
+          <p class="bubble sent">Sunday works. Let's do it offline.<time datetime="2026-10-24T11:45">11:45 AM</time></p>
+        </div>
+        <form class="chat-form" action="" method="post">
+          <label class="sr-only" for="msg-chat-kabir">Type a message</label>
+          <input type="text" id="msg-chat-kabir" name="message" placeholder="Type a message..." maxlength="500" required>
+          <button type="submit" class="btn-dark">Send</button>
+        </form>
+      </section>
+      <section class="chat-window chat-default" id="chat-riya" aria-label="Chat with Riya Sharma">
+        <header class="chat-header">
+          <span class="avatar">RS</span>
+          <div><h2>Riya Sharma</h2><p class="online">Online</p></div>
+          <div class="chat-links">
+            <label for="pg-profile" class="btn-light btn-small">Profile</label>
+            <label for="pg-report" class="btn-danger btn-small">Report</label>
+          </div>
+        </header>
+        <div class="messages">
+          <p class="bubble">Hi! Do you have time to revise DBMS before the mid-terms?<time datetime="2026-10-24T10:02">10:02 AM</time></p>
+          <p class="bubble sent">Yes! I'm free on Monday and Wednesday evenings.<time datetime="2026-10-24T10:05">10:05 AM</time></p>
+          <p class="bubble">Perfect, Monday 6 PM works. Online or in the library?<time datetime="2026-10-24T10:06">10:06 AM</time></p>
+          <p class="bubble sent">Online is better for me. I'll share a link.<time datetime="2026-10-24T10:10">10:10 AM</time></p>
+        </div>
+        <form class="chat-form" action="" method="post">
+          <label class="sr-only" for="msg-chat-riya">Type a message</label>
+          <input type="text" id="msg-chat-riya" name="message" placeholder="Type a message..." maxlength="500" required>
+          <button type="submit" class="btn-dark">Send</button>
+        </form>
+      </section>
+      </div>
+
+    </section>
+  </section>
+
+  <!-- ===================== PAGE: SETTINGS ===================== -->
+  <section class="main page" id="page-settings" aria-label="Settings">
+
+    <h1 class="page-title">Settings</h1>
+    <p class="page-subtitle">Choose who can see you, find you and message you.</p>
+
+    <div class="two-col">
+
+      <!-- ---------- Privacy controls ---------- -->
+      <section class="panel">
+        <h2>Privacy controls</h2>
+        <form action="" method="post">
+
+          <fieldset>
+            <legend>Who can see my timetable?</legend>
+            <label class="choice"><input type="radio" name="timetable" value="everyone"> Everyone</label>
+            <label class="choice"><input type="radio" name="timetable" value="friends" checked> My study partners only</label>
+            <label class="choice"><input type="radio" name="timetable" value="me"> Only me</label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Search visibility</legend>
+            <div class="setting-row">
+              <p><label for="hide-search">Hide me from search</label>
+                 <small>You won't appear on the Find Peers page.</small></p>
+              <input type="checkbox" class="switch" id="hide-search" name="hide_search" value="yes">
+            </div>
+            <div class="setting-row">
+              <p><label for="hide-online">Hide my online status</label>
+                 <small>Others won't see when you are online.</small></p>
+              <input type="checkbox" class="switch" id="hide-online" name="hide_online" value="yes">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Messaging</legend>
+            <div class="field">
+              <label for="who-msg">Who can message me?</label>
+              <select id="who-msg" name="who_message">
+                <option value="everyone">Everyone</option>
+                <option value="friends" selected>My study partners only</option>
+                <option value="nobody">Nobody</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-dark">Save changes</button>
+            <button type="reset" class="btn-light">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ---------- Blocked users ---------- -->
+      <aside class="panel">
+        <h2>Blocked users</h2>
+        <p class="hint">Blocked students can't find you, send requests or message you.</p>
+        <ul class="blocked-list">
+          <li>
+            <span class="avatar">DP</span>
+            <div><strong>Dev Patel</strong><small>B.Tech CE · 4th year</small></div>
+            <form action="" method="post"><button type="submit" name="unblock" value="dev-patel" class="btn-light btn-small">Unblock</button></form>
+          </li>
+          <li>
+            <span class="avatar">MN</span>
+            <div><strong>Meera Nair</strong><small>B.Tech ECE · 3rd year</small></div>
+            <form action="" method="post"><button type="submit" name="unblock" value="meera-nair" class="btn-light btn-small">Unblock</button></form>
+          </li>
+        </ul>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- ===================== PAGE: REPORT A USER ===================== -->
+  <section class="main page" id="page-report" aria-label="Report a user">
+
+    <h1 class="page-title">Report a user</h1>
+    <p class="page-subtitle">Tell us what went wrong. Reports are confidential.</p>
+
+    <section class="panel report-panel">
+      <h2>Report details</h2>
+      <p class="hint">Fields marked <span class="star">*</span> are required.</p>
+
+      <form action="" method="post" enctype="multipart/form-data">
+
+        <div class="field">
+          <label class="required" for="who">Student you are reporting</label>
+          <input type="text" id="who" name="reported_user" placeholder="Full name" required minlength="3">
+        </div>
+
+        <fieldset>
+          <legend class="required">Reason for report</legend>
+        <label class="choice"><input type="radio" name="reason" value="spam" required> Spam or fake profile</label>
+        <label class="choice"><input type="radio" name="reason" value="harass"> Harassment or abusive messages</label>
+        <label class="choice"><input type="radio" name="reason" value="inappropriate"> Inappropriate photo or bio</label>
+        <label class="choice"><input type="radio" name="reason" value="noshow"> Repeatedly skipping agreed sessions</label>
+        <label class="choice"><input type="radio" name="reason" value="other"> Something else</label>
+        </fieldset>
+
+        <div class="field">
+          <label class="required" for="details">Description</label>
+          <textarea id="details" name="details" placeholder="Describe what happened (at least 20 characters)" required minlength="20" maxlength="500"></textarea>
+          <span class="note">20 to 500 characters.</span>
+        </div>
+
+        <div class="field">
+          <label for="proof">Screenshot (optional)</label>
+          <input type="file" id="proof" name="proof" accept="image/*">
+        </div>
+
+        <label class="choice"><input type="checkbox" name="also_block" value="yes"> Also block this user</label>
+        <label class="choice"><input type="checkbox" name="confirm" value="yes" required> I confirm this report is true to the best of my knowledge <span class="star">*</span></label>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-dark">Submit report</button>
+          <label for="pg-dashboard" class="btn-light">Cancel</label>
+        </div>
+      </form>
+    </section>
+  </section>
+
+
+  <footer class="footer">StudyBuddy · Peer Learning &amp; Academic Collaboration · <label for="pg-index" class="footer-link">Log out</label></footer>
+  <!-- Hidden frame: forms send their (demo) data here, so the page never reloads or jumps back to the landing page -->
+
+<script>
+(() => {
+  'use strict';
+
+  /* ---------- 1. DOM Helpers & Constants ---------- */
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+  const ACCOUNT_KEY = 'studybuddy_accounts_v3';
+  const SESSION_KEY = 'studybuddy_current_user_v3';
+  const SENT_REQ_KEY = 'studybuddy_sent_requests_v3';
+  const SETTINGS_KEY = 'studybuddy_privacy_settings_v3';
+  const BLOCKED_KEY = 'studybuddy_blocked_users_v3';
+
+  const YEAR_LABELS = { '1': '1st year', '2': '2nd year', '3': '3rd year', '4': '4th year' };
+  const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  /* Structured student dataset backing dynamic profile view, sorting, and filtering */
+  const PEERS = {
+    'riya-sharma': {
+      id: 'riya-sharma',
+      name: 'Riya Sharma',
+      initials: 'RS',
+      branch: 'B.Tech CSE · 1st year',
+      match: 92,
+      newestOrder: 4,
+      mode: 'Online',
+      style: 'Discussion',
+      bestTime: 'Evenings',
+      times: ['morning', 'afternoon', 'evening'],
+      bio: 'Love solving C and DSA problems. Looking for someone to revise DBMS with before mid-terms.',
+      canHelp: ['C Programming', 'Data Structures'],
+      wantsHelp: ['DBMS'],
+      freeDays: [true, false, true, false, true, true, false],
+      slots: {
+        Morning:   ['', '', 'free', '', '', 'both', ''],
+        Afternoon: ['free', '', '', '', 'free', 'free', ''],
+        Evening:   ['both', '', 'both', '', 'free', '', '']
+      },
+      chatId: 'chat-riya'
+    },
+    'aarav-kumar': {
+      id: 'aarav-kumar',
+      name: 'Aarav Kumar',
+      initials: 'AK',
+      branch: 'B.Tech CSE · 1st year',
+      match: 86,
+      newestOrder: 6,
+      mode: 'Online',
+      style: 'Discussion',
+      bestTime: 'Evenings',
+      times: ['afternoon', 'evening'],
+      bio: 'Enjoy building Python scripts and designing normalized relational schemas. Looking for help with Physics and Calculus.',
+      canHelp: ['DBMS', 'Python'],
+      wantsHelp: ['Physics', 'Calculus'],
+      freeDays: [false, true, false, true, false, true, false],
+      slots: {
+        Morning:   ['', '', '', '', '', 'free', ''],
+        Afternoon: ['', 'free', '', 'free', '', 'free', ''],
+        Evening:   ['', 'both', '', 'free', '', '', '']
+      },
+      chatId: 'chat-aarav'
+    },
+    'ananya-nair': {
+      id: 'ananya-nair',
+      name: 'Ananya Nair',
+      initials: 'AN',
+      branch: 'B.Tech CSE · 2nd year',
+      match: 81,
+      newestOrder: 5,
+      mode: 'Either',
+      style: 'Quiet',
+      bestTime: 'Afternoons',
+      times: ['morning', 'afternoon'],
+      bio: 'Strong in graph theory, combinatorics, and proofs. Currently learning semantic HTML5, CSS Grid, and JavaScript.',
+      canHelp: ['Discrete Mathematics'],
+      wantsHelp: ['Internet Programming'],
+      freeDays: [false, true, true, false, false, false, true],
+      slots: {
+        Morning:   ['', 'free', 'free', '', '', '', 'both'],
+        Afternoon: ['', 'free', 'free', '', '', '', 'both'],
+        Evening:   ['', '', '', '', '', '', '']
+      },
+      chatId: null
+    },
+    'kabir-singh': {
+      id: 'kabir-singh',
+      name: 'Kabir Singh',
+      initials: 'KS',
+      branch: 'B.Tech ECE · 2nd year',
+      match: 78,
+      newestOrder: 2,
+      mode: 'Offline',
+      style: 'Discussion',
+      bestTime: 'Weekends',
+      times: ['morning', 'evening'],
+      bio: 'Happy to explain Boolean logic, combinational circuits, and Electromagnetism. Looking for a Python study partner.',
+      canHelp: ['Digital Electronics', 'Physics'],
+      wantsHelp: ['Python'],
+      freeDays: [false, false, true, false, false, true, true],
+      slots: {
+        Morning:   ['', '', 'free', '', '', 'both', 'both'],
+        Afternoon: ['', '', '', '', '', '', 'free'],
+        Evening:   ['', '', 'both', '', '', '', '']
+      },
+      chatId: 'chat-kabir'
+    },
+    'sneha-mehta': {
+      id: 'sneha-mehta',
+      name: 'Sneha Mehta',
+      initials: 'SM',
+      branch: 'B.Tech CSE · 1st year',
+      match: 74,
+      newestOrder: 3,
+      mode: 'Either',
+      style: 'Quiet',
+      bestTime: 'Mornings',
+      times: ['morning', 'evening'],
+      bio: 'Comfortable with multivariable calculus and technical presentations. Want practice with pointers and arrays in C.',
+      canHelp: ['Calculus', 'Communication Skills'],
+      wantsHelp: ['C Programming'],
+      freeDays: [true, false, false, true, false, false, true],
+      slots: {
+        Morning:   ['free', '', '', 'free', '', 'both', 'both'],
+        Afternoon: ['', '', '', '', '', '', ''],
+        Evening:   ['both', '', '', 'free', '', '', '']
+      },
+      chatId: null
+    },
+    'vikram-rao': {
+      id: 'vikram-rao',
+      name: 'Vikram Rao',
+      initials: 'VR',
+      branch: 'B.Tech EEE · 1st year',
+      match: 69,
+      newestOrder: 1,
+      mode: 'Offline',
+      style: 'Discussion',
+      bestTime: 'Afternoons',
+      times: ['afternoon', 'evening'],
+      bio: 'Can help with mechanics and circuit physics. Preparing for Data Structures and DBMS lab evaluations.',
+      canHelp: ['Physics'],
+      wantsHelp: ['Data Structures', 'DBMS'],
+      freeDays: [false, false, false, false, true, true, false],
+      slots: {
+        Morning:   ['', '', '', '', '', 'both', ''],
+        Afternoon: ['', '', '', '', 'free', 'free', ''],
+        Evening:   ['', '', '', '', 'free', '', '']
+      },
+      chatId: null
+    }
+  };
+
+  let currentUser = null;
+  let activeChat = 'chat-riya';
+  let activeProfileId = 'riya-sharma';
+
+  /* ---------- 2. Storage & State Helpers ---------- */
+  const readStorage = (key, fallback) => {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+
+  const writeStorage = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* Ignore storage quota errors in restricted sandboxes */
+    }
+  };
+
+  const getInitials = (name) =>
+    (name || 'Student')
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0] || '')
+      .join('')
+      .toUpperCase() || 'ST';
+
+  const formatBranchYear = (branch, year) => {
+    const cleanBranch = branch || 'CSE';
+    const yearText = YEAR_LABELS[String(year)] || '1st year';
+    return `B.Tech ${cleanBranch} · ${yearText}`;
+  };
+
+  const showPage = (pageId) => {
+    const radio = $(`#pg-${pageId}`);
+    if (radio) {
+      radio.checked = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const showFeedback = (container, message, isSuccess = false) => {
+    if (!container) return;
+    let el = $('.form-feedback', container);
+    if (!el) {
+      el = document.createElement('p');
+      el.className = 'form-feedback';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      container.append(el);
+    }
+    el.textContent = message;
+    el.classList.toggle('success', isSuccess);
+  };
+
+  async function hashPassword(value) {
+    if (window.crypto && crypto.subtle) {
+      const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+      return [...new Uint8Array(bytes)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+    let hash = 2166136261;
+    for (let i = 0; i < value.length; i++) {
+      hash ^= value.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return 'sb-' + (hash >>> 0).toString(16);
+  }
+
+  /* ---------- 3. Dynamic User Profile & Timetable Rendering ---------- */
+  function renderTagList(container, items, tagClass, fallbackItems) {
+    if (!container) return;
+    const list = items && items.length ? items : fallbackItems;
+    container.replaceChildren(
+      ...list.map((subject) => {
+        const span = document.createElement('span');
+        span.className = `tag ${tagClass}`;
+        span.textContent = subject;
+        return span;
+      })
+    );
+  }
+
+  function renderMyProfile() {
+    if (!currentUser) return;
+    const name = currentUser.name || 'Student';
+    const branchYear = formatBranchYear(currentUser.branch, currentUser.year);
+
+    $$('[data-user-name]').forEach((el) => (el.textContent = name));
+    $$('[data-user-initials]').forEach((el) => (el.textContent = getInitials(name)));
+    $$('[data-user-branch]').forEach((el) => (el.textContent = branchYear));
+
+    const myPage = $('#page-myprofile');
+    if (!myPage) return;
+
+    const bioEl = $('.profile-bio', myPage);
+    if (bioEl && currentUser.bio) bioEl.textContent = currentUser.bio;
+
+    const avatarEl = $('.big-avatar', myPage);
+    if (avatarEl) {
+      if (currentUser.photoDataUrl) {
+        const img = document.createElement('img');
+        img.src = currentUser.photoDataUrl;
+        img.alt = `${name}'s profile photo`;
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+        avatarEl.replaceChildren(img);
+      } else {
+        avatarEl.textContent = getInitials(name);
+      }
+    }
+
+    const detailPanels = $$('.details-grid .panel', myPage);
+    if (detailPanels[0]) {
+      const labels = $$('.label', detailPanels[0]);
+      if (labels[0] && labels[1]) {
+        const helpWrap = document.createElement('div');
+        renderTagList(helpWrap, currentUser.canHelp, 'tag-help', ['DBMS', 'Python']);
+        const wantWrap = document.createElement('div');
+        renderTagList(wantWrap, currentUser.wantsHelp, 'tag-want', ['C Programming', 'Data Structures']);
+
+        const title = $('h2', detailPanels[0]);
+        detailPanels[0].replaceChildren(title, labels[0], ...helpWrap.childNodes, labels[1], ...wantWrap.childNodes);
+      }
+    }
+
+    if (detailPanels[1]) {
+      const prefValues = $$('.pref-value', detailPanels[1]);
+      if (prefValues[0] && currentUser.studyMode) prefValues[0].textContent = currentUser.studyMode;
+      if (prefValues[1] && currentUser.studyStyle) prefValues[1].textContent = currentUser.studyStyle;
+      if (prefValues[2] && currentUser.availability?.length) {
+        const hasEvening = currentUser.availability.some((s) => s.endsWith('-evening'));
+        const hasMorning = currentUser.availability.some((s) => s.endsWith('-morning'));
+        prefValues[2].textContent = hasEvening ? 'Evenings' : hasMorning ? 'Mornings' : 'Afternoons';
+      }
+    }
+
+    if (currentUser.availability && currentUser.availability.length) {
+      const rows = $$('.timetable tr', myPage).slice(1);
+      const dayKeys = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const slotKeys = ['morning', 'afternoon', 'evening'];
+      rows.forEach((row, rIdx) => {
+        const cells = $$('td', row);
+        cells.forEach((cell, cIdx) => {
+          const token = `${dayKeys[cIdx]}-${slotKeys[rIdx]}`;
+          const isFree = currentUser.availability.includes(token);
+          cell.className = isFree ? 'mine' : '';
+          cell.textContent = isFree ? 'Free' : '';
+        });
+      });
+    }
+  }
+
+  function setSession(user) {
+    currentUser = user;
+    writeStorage(SESSION_KEY, user);
+    renderMyProfile();
+  }
+
+  /* ---------- 4. Dynamic Student Profile Page Population ---------- */
+  function openPeerProfile(peerId) {
+    const peer = PEERS[peerId] || PEERS['riya-sharma'];
+    activeProfileId = peer.id;
+    const page = $('#page-profile');
+    if (!page) return;
+
+    $('.big-avatar', page).textContent = peer.initials;
+    $('.profile-name', page).textContent = peer.name;
+    $('.profile-branch', page).textContent = peer.branch;
+    $('.profile-bio', page).textContent = peer.bio;
+    $('.match-number', page).textContent = `${peer.match}%`;
+
+    const panels = $$('.details-grid .panel', page);
+    if (panels[0]) {
+      const labels = $$('.label', panels[0]);
+      const helpWrap = document.createElement('div');
+      renderTagList(helpWrap, peer.canHelp, 'tag-help', []);
+      const wantWrap = document.createElement('div');
+      renderTagList(wantWrap, peer.wantsHelp, 'tag-want', []);
+      const title = $('h2', panels[0]);
+      panels[0].replaceChildren(title, labels[0], ...helpWrap.childNodes, labels[1], ...wantWrap.childNodes);
+    }
+
+    if (panels[1]) {
+      const vals = $$('.pref-value', panels[1]);
+      if (vals[0]) vals[0].textContent = peer.mode;
+      if (vals[1]) vals[1].textContent = peer.style;
+      if (vals[2]) vals[2].textContent = peer.bestTime;
+    }
+
+    const firstName = peer.name.split(' ')[0];
+    $('.timetable-panel .section-title', page).textContent = `When ${firstName} is free`;
+    const legendSpans = $$('.legend > span', page);
+    if (legendSpans[1]) {
+      legendSpans[1].innerHTML = `<span class="key" style="background-color: #E6DFF3;"></span> Only ${firstName} is free`;
+    }
+
+    const rows = $$('.timetable tr', page).slice(1);
+    const periodNames = ['Morning', 'Afternoon', 'Evening'];
+    rows.forEach((row, idx) => {
+      const slotArr = peer.slots[periodNames[idx]] || [];
+      $$('td', row).forEach((cell, cIdx) => {
+        const state = slotArr[cIdx] || '';
+        cell.className = state;
+        cell.textContent = state === 'both' ? 'Both' : '';
+      });
+    });
+
+    const sendBtn = $('.profile-actions .btn-dark', page);
+    const sentList = readStorage(SENT_REQ_KEY, []);
+    const alreadySent = sentList.some((r) => r.name === peer.name);
+    if (sendBtn) {
+      sendBtn.textContent = alreadySent ? 'Request sent' : 'Send request';
+      sendBtn.disabled = alreadySent;
+    }
+  }
+
+  /* ---------- 5. Authentication & Profile Setup Validation ---------- */
+  currentUser = readStorage(SESSION_KEY, null);
+  if (currentUser) renderMyProfile();
+
+  const loginForm = $('#login-form');
+  loginForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = $('#login-email').value.trim().toLowerCase();
+    const password = $('#login-password').value;
+
+    if (!EMAIL_REGEX.test(email)) {
+      showFeedback(loginForm, 'Please enter a valid college email address.');
+      $('#login-email').focus();
+      return;
+    }
+    const accounts = readStorage(ACCOUNT_KEY, {});
+    const account = accounts[email];
+    if (!account) {
+      showFeedback(loginForm, 'No account found for this email. Please sign up first.');
+      return;
+    }
+    if ((await hashPassword(password)) !== account.passwordHash) {
+      showFeedback(loginForm, 'Incorrect password. Please try again.');
+      $('#login-password').focus();
+      return;
+    }
+    const { passwordHash, ...safeUser } = account;
+    setSession(safeUser);
+    showFeedback(loginForm, 'Login successful. Welcome back to StudyBuddy!', true);
+    showPage('dashboard');
+  });
+
+  const signupForm = $('#signup-form');
+  signupForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = $('#signup-full-name').value.trim();
+    const email = $('#signup-email').value.trim().toLowerCase();
+    const password = $('#signup-password').value;
+    const confirm = $('#signup-confirm-password').value;
+
+    if (name.length < 2) {
+      showFeedback(signupForm, 'Please enter your full name (at least 2 characters).');
+      $('#signup-full-name').focus();
+      return;
+    }
+    if (!EMAIL_REGEX.test(email)) {
+      showFeedback(signupForm, 'Please enter a valid college email address.');
+      $('#signup-email').focus();
+      return;
+    }
+    if (password.length < 8) {
+      showFeedback(signupForm, 'Use a password with at least 8 characters.');
+      $('#signup-password').focus();
+      return;
+    }
+    if (password !== confirm) {
+      showFeedback(signupForm, 'Passwords do not match. Please check both fields.');
+      $('#signup-confirm-password').focus();
+      return;
+    }
+
+    const accounts = readStorage(ACCOUNT_KEY, {});
+    if (accounts[email]) {
+      showFeedback(signupForm, 'An account with this email already exists. Please log in.');
+      return;
+    }
+
+    const user = {
+      name,
+      email,
+      branch: $('#signup-branch').value,
+      year: $('#signup-year').value,
+      bio: '',
+      canHelp: [],
+      wantsHelp: [],
+      studyMode: 'Either',
+      studyStyle: 'Discussion',
+      availability: [],
+      photoDataUrl: ''
+    };
+    accounts[email] = { ...user, passwordHash: await hashPassword(password) };
+    writeStorage(ACCOUNT_KEY, accounts);
+    setSession(user);
+    showFeedback(signupForm, 'Account created. Complete your study profile below.', true);
+    showPage('editprofile');
+  });
+
+  const photoInput = $('#editprofile-photo');
+  photoInput?.addEventListener('change', () => {
+    const file = photoInput.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = document.createElement('img');
+      img.src = reader.result;
+      img.alt = 'Profile photo preview';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+      $('#editprofile-avatar-preview')?.replaceChildren(img);
+      if (currentUser) {
+        currentUser.photoDataUrl = reader.result;
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const editForm = $('#editprofile-form');
+  editForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!currentUser) {
+      showFeedback(editForm, 'Please create an account or log in first.');
+      showPage('login');
+      return;
+    }
+    const fd = new FormData(editForm);
+    const details = {
+      bio: String(fd.get('bio') || '').trim(),
+      canHelp: fd.getAll('canHelp'),
+      wantsHelp: fd.getAll('wantsHelp'),
+      studyMode: fd.get('studyMode') || 'Either',
+      studyStyle: fd.get('studyStyle') || 'Discussion',
+      availability: fd.getAll('availability[]')
+    };
+    currentUser = { ...currentUser, ...details };
+    setSession(currentUser);
+
+    const accounts = readStorage(ACCOUNT_KEY, {});
+    if (accounts[currentUser.email]) {
+      accounts[currentUser.email] = { ...accounts[currentUser.email], ...details, photoDataUrl: currentUser.photoDataUrl || '' };
+      writeStorage(ACCOUNT_KEY, accounts);
+    }
+    showFeedback(editForm, 'Your study profile has been saved.', true);
+    showPage('dashboard');
+  });
+
+  /* ---------- 6. Find Peers: Search, Multi-Criteria Filter & Sort ---------- */
+  const searchForm = $('.search-bar');
+  const filterForm = $('.filters');
+  const sortSelect = $('#page-find select[name="sort"]');
+  const resultsGrid = $('#page-find .results-grid');
+
+  // Tag each static card with its peer ID for accurate metadata matching & sorting
+  if (resultsGrid) {
+    $$('.student-card', resultsGrid).forEach((card) => {
+      const nameText = $('.name', card)?.textContent.trim().toLowerCase().replace(/\s+/g, '-') || '';
+      if (PEERS[nameText]) card.dataset.peerId = nameText;
+    });
+  }
+
+  function updateFindResults() {
+    const page = $('#page-find');
+    if (!page || !resultsGrid) return;
+
+    const query = (searchForm?.elements.q?.value || '').trim().toLowerCase();
+    const subject = filterForm?.elements.subject?.value || 'Any subject';
+    const looking = filterForm?.elements.looking?.value || 'help-me';
+    const mode = filterForm?.elements.mode?.value || 'either';
+    const selectedDays = filterForm ? $$('input[name="day"]:checked', filterForm).map((el) => el.value) : [];
+    const selectedTimes = filterForm ? $$('input[name="time"]:checked', filterForm).map((el) => el.value) : [];
+    const sortBy = sortSelect?.value || 'Best match';
+
+    const dayIndexes = { mon: 0, tue: 1, wed: 2, thu: 3, fri: 4, sat: 5, sun: 6 };
+    const cards = $$('.student-card', resultsGrid);
+
+    // Sort cards first
+    cards.sort((a, b) => {
+      const peerA = PEERS[a.dataset.peerId];
+      const peerB = PEERS[b.dataset.peerId];
+      if (!peerA || !peerB) return 0;
+      return sortBy === 'Newest' ? peerB.newestOrder - peerA.newestOrder : peerB.match - peerA.match;
+    });
+    cards.forEach((card) => resultsGrid.append(card));
+
+    let visibleCount = 0;
+    cards.forEach((card) => {
+      const peer = PEERS[card.dataset.peerId];
+      const cardText = card.innerText.toLowerCase();
+
+      const queryOk = !query || cardText.includes(query);
+
+      let subjectOk = true;
+      if (subject !== 'Any subject') {
+        if (peer) {
+          const pool = looking === 'i-help' ? peer.wantsHelp : peer.canHelp;
+          subjectOk = pool.some((s) => s.toLowerCase() === subject.toLowerCase());
+        } else {
+          subjectOk = cardText.includes(subject.toLowerCase());
+        }
+      }
+
+      const peerMode = peer ? peer.mode.toLowerCase() : 'either';
+      const modeOk = mode === 'either' || peerMode === mode || peerMode === 'either';
+
+      const dayChips = $$('.days .day', card);
+      const dayOk =
+        !selectedDays.length ||
+        selectedDays.some((d) => dayChips[dayIndexes[d]]?.classList.contains('day-free'));
+
+      const timeOk =
+        !selectedTimes.length ||
+        (peer ? selectedTimes.some((t) => peer.times.includes(t)) : true);
+
+      const isMatch = queryOk && subjectOk && modeOk && dayOk && timeOk;
+      card.classList.toggle('is-hidden', !isMatch);
+      if (isMatch) visibleCount++;
+    });
+
+    const countEl = $('.results-count', page);
+    if (countEl) {
+      countEl.textContent = `${visibleCount} ${visibleCount === 1 ? 'student' : 'students'} found`;
+    }
+
+    const emptyState = $('.empty-state', page);
+    if (emptyState) {
+      emptyState.classList.toggle('is-hidden', visibleCount !== 0);
+    }
+  }
+
+  searchForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    updateFindResults();
+  });
+  searchForm?.elements.q?.addEventListener('input', updateFindResults);
+  filterForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    updateFindResults();
+  });
+  filterForm?.addEventListener('reset', () => setTimeout(updateFindResults, 0));
+  sortSelect?.addEventListener('change', updateFindResults);
+
+  // Initialize Find Peers state so empty-state is hidden when results exist
+  updateFindResults();
+
+  /* ---------- 7. Requests, Messages, Profile Links & Badges ---------- */
+  function updateNavBadges() {
+    const incomingCount = $$('#page-requests .panel-in .student-card').length;
+    const sentCount = $$('#page-requests .panel-sent tbody tr').length;
+
+    const reqBadge = $('.navbar label[for="pg-requests"] .badge');
+    if (reqBadge) {
+      reqBadge.textContent = String(incomingCount);
+      reqBadge.style.display = incomingCount > 0 ? 'flex' : 'none';
+    }
+
+    const inTabLabel = $('#page-requests label[for="tab-in"]');
+    if (inTabLabel) inTabLabel.textContent = `Incoming (${incomingCount})`;
+
+    const sentTabLabel = $('#page-requests label[for="tab-sent"]');
+    if (sentTabLabel) sentTabLabel.textContent = `Sent (${sentCount})`;
+
+    const unreadTotal = $$('#page-messages .chat-list .unread').reduce(
+      (sum, el) => sum + (parseInt(el.textContent, 10) || 0),
+      0
+    );
+    const msgBadge = $('.navbar label[for="pg-messages"] .badge');
+    if (msgBadge) {
+      msgBadge.textContent = String(unreadTotal);
+      msgBadge.style.display = unreadTotal > 0 ? 'flex' : 'none';
+    }
+  }
+
+  function appendSentRequestRow(peer) {
+    const tbody = $('#page-requests .panel-sent tbody');
+    if (!tbody || !peer) return;
+    const exists = $$('th', tbody).some((th) => th.textContent.trim() === peer.name);
+    if (exists) return;
+
+    const today = new Date();
+    const iso = today.toISOString().slice(0, 10);
+    const formatted = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const subject = peer.canHelp[0] || 'General Study';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <th scope="row">${peer.name}</th>
+      <td>${peer.branch.replace('B.Tech ', '')}</td>
+      <td>${subject}</td>
+      <td><time datetime="${iso}">${formatted}</time></td>
+      <td><span class="status pending">Pending</span></td>
+      <td><form action="" method="post"><button type="submit" name="cancel" value="${peer.id}" class="btn-danger btn-small">Cancel</button></form></td>
+    `;
+    tbody.prepend(tr);
+    updateNavBadges();
+  }
+
+  function activateChatWindow(chatId) {
+    activeChat = chatId;
+    $$('#page-messages .chat-window').forEach((win) => {
+      win.classList.toggle('is-active', win.id === chatId);
+    });
+    $$('#page-messages .chat-list a').forEach((link) => {
+      const isMatch = link.getAttribute('href') === `#${chatId}`;
+      link.classList.toggle('is-active', isMatch);
+      if (isMatch) {
+        const unread = $('.unread', link);
+        if (unread) unread.remove();
+      }
+    });
+    updateNavBadges();
+  }
+
+  // Set initial active chat styling cleanly
+  activateChatWindow('chat-riya');
+
+  document.addEventListener('click', (e) => {
+    // 1. View Peer Profile triggers (from cards, requests, or chat headers)
+    const viewTrigger = e.target.closest('label[for="pg-profile"]');
+    if (viewTrigger) {
+      const card = viewTrigger.closest('.student-card');
+      const chatWin = viewTrigger.closest('.chat-window');
+      let rawName = '';
+      if (card) rawName = $('.name', card)?.textContent.trim() || '';
+      else if (chatWin) rawName = $('.chat-header h2', chatWin)?.textContent.trim() || '';
+      const peerId = rawName.toLowerCase().replace(/\s+/g, '-');
+      openPeerProfile(peerId || 'riya-sharma');
+      return;
+    }
+
+    // 2. Send Study Request buttons
+    const sendBtn = e.target.closest('.btn-request, .card-buttons .btn-dark, .profile-actions .btn-dark');
+    if (sendBtn && /send request/i.test(sendBtn.textContent)) {
+      e.preventDefault();
+      const card = sendBtn.closest('.student-card');
+      let peerId = activeProfileId;
+      if (card) {
+        const nameText = $('.name', card)?.textContent.trim().toLowerCase().replace(/\s+/g, '-') || '';
+        if (PEERS[nameText]) peerId = nameText;
+      }
+      const peer = PEERS[peerId];
+
+      // Mark matching buttons across Dashboard, Find Peers, and Profile as sent
+      $$('.student-card').forEach((c) => {
+        const cName = $('.name', c)?.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+        if (cName === peerId) {
+          const btn = $('.btn-request, .card-buttons .btn-dark', c);
+          if (btn) {
+            btn.textContent = 'Request sent';
+            btn.disabled = true;
+            btn.setAttribute('aria-label', 'Study request sent');
+          }
+          let note = $('.request-note', c);
+          if (!note) {
+            note = document.createElement('p');
+            note.className = 'request-note';
+            c.append(note);
+          }
+          note.textContent = 'Your study request has been sent.';
+        }
+      });
+
+      if (sendBtn.closest('#page-profile')) {
+        sendBtn.textContent = 'Request sent';
+        sendBtn.disabled = true;
+      }
+
+      if (peer) {
+        const sentList = readStorage(SENT_REQ_KEY, []);
+        if (!sentList.some((r) => r.name === peer.name)) {
+          sentList.push({ name: peer.name, id: peer.id });
+          writeStorage(SENT_REQ_KEY, sentList);
+        }
+        appendSentRequestRow(peer);
+      }
+      return;
+    }
+
+    // 3. Message button on Student Profile
+    const msgBtn = e.target.closest('#page-profile .profile-actions .btn-light');
+    if (msgBtn && /message/i.test(msgBtn.textContent)) {
+      e.preventDefault();
+      const peer = PEERS[activeProfileId];
+      if (peer?.chatId) {
+        activateChatWindow(peer.chatId);
+        showPage('messages');
+      } else {
+        showFeedback($('#page-profile .profile-header > div:nth-child(2)'), 'Send a study request and wait for acceptance before starting a chat.');
+      }
+      return;
+    }
+
+    // 4. Logout link in footer
+    const logoutLink = e.target.closest('.footer-link');
+    if (logoutLink) {
+      e.preventDefault();
+      currentUser = null;
+      localStorage.removeItem(SESSION_KEY);
+      showPage('index');
+      return;
+    }
+
+    // 5. Chat sidebar thread switcher
+    const chatLink = e.target.closest('.chat-list a[href^="#chat-"]');
+    if (chatLink) {
+      e.preventDefault();
+      const targetId = chatLink.getAttribute('href').slice(1);
+      activateChatWindow(targetId);
+      return;
+    }
+
+    // 6. Cancel sent request
+    const cancelBtn = e.target.closest('button[name="cancel"]');
+    if (cancelBtn) {
+      e.preventDefault();
+      const row = cancelBtn.closest('tr');
+      if (row) {
+        row.remove();
+        updateNavBadges();
+      }
+      return;
+    }
+
+    // 7. Unblock user in Settings
+    const unblockBtn = e.target.closest('button[name="unblock"]');
+    if (unblockBtn) {
+      e.preventDefault();
+      const item = unblockBtn.closest('li');
+      const list = item?.parentElement;
+      if (item) item.remove();
+      if (list && !list.children.length) {
+        const empty = document.createElement('li');
+        empty.textContent = 'No blocked users.';
+        list.append(empty);
+      }
+      return;
+    }
+
+    // 8. Accept / Reject incoming request
+    const actionBtn = e.target.closest('button[name="action"]');
+    if (actionBtn) {
+      e.preventDefault();
+      const card = actionBtn.closest('.student-card');
+      if (card) {
+        const accepted = actionBtn.value === 'accept';
+        const peerName = $('.name', card)?.textContent.trim() || 'Student';
+        card.innerHTML = `<p class="form-feedback ${accepted ? 'success' : ''}">${
+          accepted
+            ? `Accepted ${peerName}'s study request. You can now message each other.`
+            : `Declined ${peerName}'s study request.`
+        }</p>`;
+        setTimeout(() => {
+          card.remove();
+          updateNavBadges();
+        }, 1800);
+      }
+    }
+  });
+
+  /* ---------- 8. Interactive Chat Messaging ---------- */
+  $$('.chat-form').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = $('input[name="message"]', form);
+      const value = input?.value.trim();
+      if (!value) return;
+
+      const win = form.closest('.chat-window');
+      const messages = $('.messages', win);
+      const bubble = document.createElement('p');
+      bubble.className = 'bubble sent';
+      bubble.append(document.createTextNode(value));
+
+      const time = document.createElement('time');
+      time.textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      bubble.append(time);
+      messages.append(bubble);
+
+      // Update sidebar preview snippet
+      const sidebarPreview = $(`.chat-list a[href="#${win.id}"] small`);
+      if (sidebarPreview) sidebarPreview.textContent = value;
+
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+    });
+  });
+
+  /* ---------- 9. Settings & Report Forms ---------- */
+  const settingsForm = $('#page-settings form');
+  settingsForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(settingsForm);
+    const prefs = {
+      timetable: fd.get('timetable') || 'friends',
+      hideSearch: fd.get('hide_search') === 'yes',
+      hideOnline: fd.get('hide_online') === 'yes',
+      whoMessage: fd.get('who_message') || 'friends'
+    };
+    writeStorage(SETTINGS_KEY, prefs);
+    showFeedback(settingsForm, 'Your privacy settings have been saved.', true);
+  });
+
+  const reportForm = $('#page-report form');
+  reportForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const reportedName = $('#who')?.value.trim() || 'the user';
+    const shouldBlock = reportForm.elements.also_block?.checked;
+
+    if (shouldBlock && reportedName) {
+      const blockedList = $('#page-settings .blocked-list');
+      if (blockedList) {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="avatar">${getInitials(reportedName)}</span>
+          <div><strong>${reportedName}</strong><small>Blocked via report</small></div>
+          <form action="" method="post"><button type="submit" name="unblock" value="${reportedName.toLowerCase()}" class="btn-light btn-small">Unblock</button></form>
+        `;
+        blockedList.append(li);
+      }
+    }
+
+    showFeedback(
+      reportForm,
+      shouldBlock
+        ? `Report submitted and ${reportedName} has been added to your blocked list.`
+        : `Confidential report submitted for ${reportedName}. Thank you for keeping StudyBuddy safe.`,
+      true
+    );
+    reportForm.reset();
+  });
+})();
+</script>
+</body>
+</html>
